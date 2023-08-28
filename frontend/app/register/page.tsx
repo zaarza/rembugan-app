@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import * as Yup from "yup";
 import carouselData from "@/data/carousel";
+import Carousel from "@/components/Carousel";
 
 interface FormInitialValues {
     name: string,
@@ -37,40 +38,13 @@ const Register = () => {
         }, 2000)
     };
 
-    const [activeCarousel, setActiveCarousel] = useState<number>(0);
-
     useEffect(() => {
         //  TODO:  check authentication, redirect to main page if has been logged in
     }, [])
-
-    useEffect(() => {
-        const automatedCarousel = setInterval(() => {
-            if (activeCarousel < carouselData.length -1) {
-                setActiveCarousel(activeCarousel + 1)
-            } else {
-                setActiveCarousel(0)
-            };
-        }, 5000);
-
-        return (() => {
-            clearInterval(automatedCarousel);
-        })
-    }, [activeCarousel, carouselData])
     
     return (
         <div className="flex flex-col lg:flex-row w-full lg:min-h-screen">
-            <div className="carousel lg:max-h-screen bg-primary flex flex-col items-center px-8 py-12 gap-y-10 lg:w-full lg:order-2 justify-center">
-                <img className="h-[200px]  rounded-lg shadow-lg lg:h-[350px]" src={ carouselData[activeCarousel].image } alt="carousel" />
-                <div className="h-[120px] flex flex-col gap-y-4">
-                    <h1 className="font-semibold text-2xl text-white text-center lg:text-3xl">{ carouselData[activeCarousel].title }</h1>
-                    <h2 className="text-base text-white text-center">{ carouselData[activeCarousel].description }</h2>
-                </div>
-                <div className="flex gap-x-3">
-                    {carouselData.map((carouselItem, index) => (
-                        <button className={` rounded-full w-3 aspect-square ${activeCarousel === index ? 'bg-white' : 'bg-white/50'}`}  key={index} onClick={() => setActiveCarousel(index)} />
-                    ))}
-                </div>
-            </div>
+            <Carousel data={ carouselData }/>
             
             <form className="credentials overflow-auto lg:max-h-screen flex flex-col gap-y-12 px-8 py-12 lg:w-full lg:max-w-[40%] lg:px-12" onSubmit={ form.handleSubmit } >
                 <div className="header flex flex-col gap-y-2">
