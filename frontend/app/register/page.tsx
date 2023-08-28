@@ -5,18 +5,13 @@ import { useFormik } from "formik";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import * as Yup from "yup";
+import carouselData from "@/data/carousel";
 
 interface FormInitialValues {
     name: string,
     email: string,
     password: string
 };
-
-interface CarouselData {
-    image: string,
-    title: string,
-    description: string,
-}
 
 const Register = () => {
     const form = useFormik({
@@ -43,23 +38,6 @@ const Register = () => {
     };
 
     const [activeCarousel, setActiveCarousel] = useState<number>(0);
-    const [carouselData, setCarouselData] = useState<CarouselData[]>([
-        {
-            image: "/assets/images/carousel-private.png",
-            title: "Start Conversation Effortlessly",
-            description: "Discover new friends and begin talking about things you love.",
-        },
-        {
-            image: "/assets/images/carousel-group.png",
-            title: "Interactive Group Chats",
-            description: "Communicate with groups of friends in lively and dynamic group chats.",
-        },
-        {
-            image: "/assets/images/carousel-notification.png",
-            title: "Real-Time Notifications",
-            description: "Never miss important messages with instant notifications send directly to your inbox",
-        },
-    ])
 
     useEffect(() => {
         //  TODO:  check authentication, redirect to main page if has been logged in
