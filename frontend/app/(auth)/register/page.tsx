@@ -2,11 +2,9 @@
 
 import InputGroup from "@/components/InputGroup";
 import { useFormik } from "formik";
-import Link from "next/link";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import * as Yup from "yup";
-import carouselData from "@/data/carousel";
-import Carousel from "@/components/Carousel";
 
 interface FormInitialValues {
     name: string,
@@ -43,9 +41,7 @@ const Register = () => {
     }, [])
     
     return (
-        <div className="flex flex-col lg:flex-row w-full lg:min-h-screen">
-            <Carousel data={ carouselData }/>
-            
+        <>
             <form className="credentials overflow-auto lg:max-h-screen flex flex-col gap-y-12 px-8 py-12 lg:w-full lg:max-w-[40%] lg:px-12" onSubmit={ form.handleSubmit } >
                 <div className="header flex flex-col gap-y-2">
                     <img className="w-14" src="/assets/images/rembugan-logo.svg" alt="rembugan logo" />
@@ -62,7 +58,7 @@ const Register = () => {
                 <button className="bg-primary py-4 px-8 rounded-lg text-white hover:brightness-95 disabled:bg-gray-400" type="submit" disabled={ form.isSubmitting }>Login</button>
                 <small className="self-center text-base">Already have an account? <Link className="text-primary" href="/login">Login</Link></small>
             </form>
-        </div>
+        </>
     )
 }
 
