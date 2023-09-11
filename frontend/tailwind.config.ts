@@ -14,6 +14,12 @@ const config: Config = {
       colors: {
         primary: "#696EEC",
         background: "#F4F4F4"
+      },
+      width: {
+        inherit: "inherit"
+      },
+      maxWidth: {
+        inherit: "inherit"
       }
     },
   },
