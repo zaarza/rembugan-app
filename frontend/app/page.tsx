@@ -1,22 +1,16 @@
 "use client";
 
-import ActiveMenu from "@/components/ActiveMenu";
-import Conversation from "@/components/Conversation";
-import MenuBar from "@/components/MenuBar";
-import NoConversation from "@/components/NoConversation";
-import useAppStore from "@/store/app.store";
+import Menu from "@/components/menu/Menu";
+import Conversation from "@/components/conversation";
+import Menubar from "@/components/menubar/Menubar";
 
 const Main = () => {
-    const showConversation = useAppStore((state: any) => state.showConversation);
-    
     return (
-        <>
-            <div className="flex relative w-full h-screen overflow-hidden bg-white lg:static">
-                <MenuBar />
-                <ActiveMenu />
-                { showConversation ? <Conversation /> : <NoConversation /> }
-            </div>
-        </>
+        <div className="flex relative w-full h-screen overflow-hidden bg-white lg:static">
+            <Menubar />
+            <Menu />
+            <Conversation />
+        </div>
     );
 };
 

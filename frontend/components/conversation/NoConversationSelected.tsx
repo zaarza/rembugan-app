@@ -1,4 +1,6 @@
-const NoConversation = () => {
+import React from "react";
+
+const NoConversationSelected = () => {
     return (
         <div className="flex-col items-center justify-center hidden w-full h-screen gap-y-8 lg:flex bg-background">
             <div className="max-w-xs ">
@@ -12,4 +14,4 @@ const NoConversation = () => {
     );
 };
 
-export default NoConversation;
+export default NoConversationSelected;

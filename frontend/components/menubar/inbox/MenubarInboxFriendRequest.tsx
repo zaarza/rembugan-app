@@ -1,4 +1,4 @@
-const FriendRequestInbox = () => {
+const MenubarInboxFriendRequest = () => {
     return (
         <div className="flex gap-x-5">
             <img className="w-11 h-11 rounded-lg border border-black/10" src="/assets/images/avatar-dummy.png" alt="" />
@@ -19,4 +19,4 @@ const FriendRequestInbox = () => {
     );
 };
 
-export default FriendRequestInbox;
+export default MenubarInboxFriendRequest;
