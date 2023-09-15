@@ -1,8 +1,8 @@
 "use client";
 
-import Menu from "@/components/menu/Menu";
-import Conversation from "@/components/conversation";
-import Menubar from "@/components/menubar/Menubar";
+import Menu from "@/components/Fragments/Menu";
+import Conversation from "@/components/Fragments/Conversation";
+import Menubar from "@/components/Fragments/Menubar";
 
 const Main = () => {
     return (

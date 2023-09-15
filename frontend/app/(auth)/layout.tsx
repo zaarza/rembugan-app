@@ -1,15 +1,7 @@
-"use client";
-
-import carouselData from "@/data/carousel";
-import Carousel from "@/components/Carousel";
+import Layout from "@/components/Layouts/AuthLayout";
 
 const AuthLayout = ({ children }: any) => {
-    return (
-        <div className="flex flex-col lg:flex-row w-full lg:min-h-screen">
-            <Carousel data={ carouselData }/>
-            { children }
-        </div>
-    )
+    return <Layout children={children} />
 }
 
 export default AuthLayout;
