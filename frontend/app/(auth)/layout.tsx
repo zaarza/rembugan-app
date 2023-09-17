@@ -1,7 +1,12 @@
-import Layout from "@/components/Layouts/AuthLayout";
+import Carousel from "@/features/auth/ui/Carousel";
 
 const AuthLayout = ({ children }: any) => {
-    return <Layout children={children} />
-}
+    return (
+        <div className="flex flex-col lg:flex-row w-full lg:min-h-screen">
+            <Carousel />
+            {children}
+        </div>
+    );
+};
 
 export default AuthLayout;

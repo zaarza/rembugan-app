@@ -1,10 +1,10 @@
-interface Carousel {
+interface CarouselItem {
     image: string,
     title: string,
     description: string,
 }
 
-const carousel: Carousel[] = [
+const carouselData: CarouselItem[] = [
     {
         image: "/assets/images/carousel-private.png",
         title: "Start Conversation Effortlessly",
@@ -22,4 +22,4 @@ const carousel: Carousel[] = [
     },
 ];
 
-export default carousel;
+export default carouselData;
