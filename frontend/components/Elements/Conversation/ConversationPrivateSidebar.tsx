@@ -24,10 +24,7 @@ const ConversationPrivateSidebar = ({ show, setShow, data }: ConversationPrivate
         <div className={`flex fixed h-full flex-col gap-y-10 p-3 md:static right-0 top-0 border-l border-l-black/10 md:border-0 bg-white w-[80%] max-w-[340px] z-20 ${show ? "-mr-0 duration-300" : "-mr-[9999px] duration-300"}`}>
             {/* TITLE */}
             <div className="flex items-center justify-between title">
-                <button className="h-full pr-3 group flex" onClick={() => {
-                        setShow()
-                        console.log("oke")
-                    }}>
+                <button className="h-full pr-3 group flex" onClick={() => setShow()}>
                     <svg className="group-hover:fill-primary w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"></path>
                     </svg>

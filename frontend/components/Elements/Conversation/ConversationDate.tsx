@@ -1,6 +1,3 @@
-import { type } from "os";
-import React from "react";
-
 type ConversationDateProps = {
     time: number | string;
 }

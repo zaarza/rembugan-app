@@ -21,7 +21,7 @@ const ConversationPrivate = () => {
     });
 
     const submit = (values: any) => {
-        console.log(values);
+        (values);
         form.resetForm();
     };
 
@@ -32,7 +32,7 @@ const ConversationPrivate = () => {
                     <ConversationHeader name="Samsudin" status="Online" profilePicturePath="/assets/images/avatar-dummy.png" setShowChatProfileDetail={() => setShowChatProfileDetail(!showChatProfileDetail)}/>
                     <div className="flex flex-col h-full pb-96 px-5 pt-3 overflow-y-scroll border-r border-r-black/10 chat">
                         <ConversationDate time="Yesterday" />
-                        <ConversationCard name="You" avatar="/assets/images/avatar-dummy.png" content="Hello world" position="RIGHT" time={1694652432202} is_readed={false} />
+                        <ConversationCard name="You" avatar="/assets/images/avatar-dummy.png" content="Hello world" position="RIGHT" time={1694652432202} is_readed={true} />
                         <ConversationCard name="Samsudin" avatar="/assets/images/avatar-dummy.png" content="Hello world" position="LEFT" time={1694652432202} />
                     </div>
                     <ConversationForm form={form} />
@@ -42,7 +42,6 @@ const ConversationPrivate = () => {
                     show={showChatProfileDetail}
                     setShow={() => {
                         setShowChatProfileDetail(!showChatProfileDetail)
-                        console.log("trigered")
                     }}
                     data={{
                         name: "Samsudin",

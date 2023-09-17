@@ -1,17 +1,15 @@
-import React, { useState } from "react";
-
-type MenuSearchBarProps = {
+type SearchbarProps = {
     name: string;
     placeholder: string;
     submitHandler: (event: React.FormEvent) => void;
     value:  string,
-    setValue: (event: React.FormEvent<HTMLInputElement>) => HTMLInputElement
+    setValue: (event: any) => any
 };
 
-const MenuSearchBar = ({ name, placeholder, submitHandler, value, setValue }: MenuSearchBarProps) => {
+const Searchbar = ({ name, placeholder, submitHandler, value, setValue }: SearchbarProps) => {
 
     return (
-        <form onSubmit={submitHandler}>
+        <form onSubmit={(event) => submitHandler(event)}>
             <div className="flex items-center border rounded-lg bg-background border-black/10 last:focus:border-primary peer">
                 <label htmlFor="menu-search-bar" className="flex justify-center w-20 h-12 cursor-pointer aspect-square first:fill-black/40">
                     <svg className="w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -24,4 +22,4 @@ const MenuSearchBar = ({ name, placeholder, submitHandler, value, setValue }: Me
     );
 };
 
-export default MenuSearchBar;
+export default Searchbar;

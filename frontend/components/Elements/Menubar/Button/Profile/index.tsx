@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import MenubarProfileMenu from "./MenubarProfileMenu";
+import MenubarProfileMenu from "@/components/Elements/Menubar/Button/Profile/Menu";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 
 const MenubarProfileButton = () => {
@@ -9,8 +9,7 @@ const MenubarProfileButton = () => {
 
     return (
         <div className="relative" ref={menuRef}>
-            {/* BUTTON */}
-            <button className="w-11 h-11 rounded-full overflow-hidden" onClick={() => setShowMenu(!showMenu)}>
+            <button className="w-7 h-7 rounded-full overflow-hidden" onClick={() => setShowMenu(!showMenu)}>
                 <img className="w-full" src="/assets/images/avatar-dummy.png" alt="" />
             </button>
 

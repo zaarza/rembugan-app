@@ -1,5 +1,3 @@
-import React from "react";
-
 import H1 from "@/components/Elements/Heading/H1";
 import H2 from "@/components/Elements/Heading/H2";
 

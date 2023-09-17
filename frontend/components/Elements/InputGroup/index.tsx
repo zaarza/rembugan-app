@@ -7,12 +7,13 @@ type InputGroupProps = {
     type: string;
     name: string;
     placeholder?: string;
+    label?: string;
 };
 
-const InputGroup = ({ type, name, placeholder, formikObject }: InputGroupProps) => {
+const InputGroup = ({ type, name, placeholder, formikObject, label }: InputGroupProps) => {
     return (
         <div className="form-group flex flex-col gap-y-3">
-            <Label htmlFor={name} displayText={name[0].toUpperCase() + name.slice(1)} />
+            <Label htmlFor={name} displayText={label || name[0].toUpperCase() + name.slice(1)} />
             <Input name={name} placeholder={placeholder} formikObject={formikObject} type={type} />
             <Error message={formikObject.status?.errors[name]} />
         </div>

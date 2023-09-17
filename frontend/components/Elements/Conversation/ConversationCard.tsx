@@ -1,5 +1,3 @@
-import React from "react";
-
 type ConversationCardProps = { 
     name: string; 
     content: string; 
@@ -24,7 +22,7 @@ const ConversationCard = ({ name, content, time, avatar, is_readed, position }: 
                         </svg>
                     </div>
                 )}
-                <div className={`bg-white w-fit rounded-lg border border-black/10 px-6 py-4 col-start-2 row-start-2 ${position === "LEFT" ? "rounded-tl-none" : "rounded-tr-none"}`}>{content}</div>
+                <div className={`w-fit rounded-lg border border-black/10 px-6 py-4 col-start-2 row-start-2 ${position === "LEFT" ? "rounded-tl-none bg-primary text-white" : "rounded-tr-none bg-white text-slate-800"}`}>{content}</div>
                 <img className={`w-11 aspect-square rounded-lg row-start-2 border border-black/10 ${position === "LEFT" ? "col-start-1" : "col-start-3"}`} src={avatar} alt={`${name} photo`} />
             </div>
         </div>

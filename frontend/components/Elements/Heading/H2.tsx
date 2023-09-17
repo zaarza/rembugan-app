@@ -1,11 +1,10 @@
-import React from "react";
-
 type H2Props = {
-    text: string;
+    text: string | number;
+    size?: string;
 };
 
-const H2 = ({ text }: H2Props) => {
-    return <h2 className="text-base text-slate-800">{text}</h2>;
+const H2 = ({ text, size }: H2Props) => {
+    return <h2 className={`text-slate-800 ${size ? "text-[" + size + "]" : "text-base"}`}>{text}</h2>;
 };
 
 export default H2;

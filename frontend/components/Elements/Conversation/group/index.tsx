@@ -20,7 +20,7 @@ const ConversationGroup = () => {
     });
 
     const submit = (values: any) => {
-        console.log(values);
+        (values);
     };
 
     if (showConversation) {
