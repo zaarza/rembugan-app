@@ -1,9 +1,9 @@
 import { create } from "zustand";
-import Menu from "@/type/Menu";
+import menuType from "@/type/menu";
 
 const useAppStore = create((set) => ({
-    activeMenu: Menu.PRIVATE,
-    setActiveMenu: (activeMenu: Menu) => set({ activeMenu }),
+    activeMenu: menuType.PRIVATE,
+    setActiveMenu: (activeMenu: menuType) => set({ activeMenu }),
 
     showConversation: false,
     setShowConversation: (showConversation: boolean) => set({ showConversation }),
@@ -11,7 +11,7 @@ const useAppStore = create((set) => ({
     setActiveConversationType: (activeConversationType: "PRIVATE" | "GROUP") => set({ activeConversationType }),
     
     activeConversationId: null,
-    setActveConversationId: (activeConversationId: number | null) => set({ activeConversationId }),
+    setActiveConversationId: (activeConversationId: number | null) => set({ activeConversationId }),
 }));
 
 export default useAppStore;

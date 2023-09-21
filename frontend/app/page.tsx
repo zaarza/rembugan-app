@@ -1,16 +1,18 @@
-"use client";
+import Menu from "@/features/main/ui/Menu";
+import Conversation from "@/features/main/ui/Conversation";
+import Navbar from "@/features/main/ui/Navbar";
 
-import Menu from "@/components/Fragments/Menu";
-import Conversation from "@/components/Fragments/Conversation";
-import Menubar from "@/components/Fragments/Menubar";
+const MainLayout = ({ children }: any) => {
+    return <div className="relative h-screen max-w-screen-2xl mx-auto flex overflow-hidden">{children}</div>;
+};
 
 const Main = () => {
     return (
-        <div className="flex relative w-full h-screen overflow-hidden bg-white lg:static">
-            <Menubar />
+        <MainLayout>
+            <Navbar />
             <Menu />
             <Conversation />
-        </div>
+        </MainLayout>
     );
 };
 
