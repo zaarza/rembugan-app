@@ -6,6 +6,7 @@ import ButtonIcon from "@/features/main/ui/reusable/ButtonIcon";
 import ConfirmRequest from "@/features/main/ui/reusable/ConfirmRequest";
 import InboxCategoryButton from "@/features/main/ui/reusable/InboxCategoryButton";
 import NotificationBellSvg from "@/shared/icons/NotificationBell";
+import CloseSvg from "@/shared/icons/Close";
 
 const InboxButton = () => {
     const [showInbox, setShowInbox] = useState<boolean>(false);
@@ -24,10 +25,10 @@ const InboxButton = () => {
     return (
         <div className="relative" ref={menuRef}>
             <ButtonIcon icon={<NotificationBellSvg />} action={() => setShowInbox(!showInbox)} active={showInbox} notificationCount={1} />
-            <div className={`bg-white shadow-lg min-w-[400px] flex flex-col gap-y-5 absolute bottom-0 lg:bottom-[inherit] lg:top-0 lg:left-0 left-0 rounded-lg border-black/10 border duration-300 z-30 ${showInbox ? "visible opacity-100 lg:left-[200%] bottom-[150%]" : "invisible opacity-50"}`}>
+            <div className={`bg-white shadow-lg w-[360px] overflow-hidden flex flex-col gap-y-5 absolute bottom-0 lg:bottom-[inherit] lg:top-0 lg:left-0 -left-[50%] rounded-lg border-black/10 border duration-300 z-30 ${showInbox ? "visible opacity-100 lg:left-[200%] bottom-[150%]" : "invisible opacity-50"}`}>
                 <div className="flex justify-between px-6 pt-6">
                     <h1 className="font-medium text-slate-800">Notifications ({inbox.length})</h1>
-                    <ButtonIcon icon={<NotificationBellSvg />} action={() => setShowInbox(!showInbox)} />
+                    <ButtonIcon icon={<CloseSvg />} action={() => setShowInbox(!showInbox)} />
                 </div>
 
                 <div className="flex px-6 gap-x-4">

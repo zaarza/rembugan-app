@@ -10,7 +10,7 @@ const Menu = () => {
     const activeMenu = useAppStore((state: any) => state.activeMenu);
 
     return (
-        <div className="w-ful h-fulll bg-white lg:min-w-[320px] lg:max-w-[400px] lg:border-r-black/10 lg:border-r">
+        <div className="w-full h-fulll bg-white lg:min-w-[320px] lg:max-w-[400px] lg:border-r-black/10 lg:border-r">
             {activeMenu === menuType.PRIVATE && <MenuPrivate />}
             {activeMenu === menuType.CONTACTS && <MenuContacts />}
             {activeMenu === menuType.GROUPS && <MenuGroups />}

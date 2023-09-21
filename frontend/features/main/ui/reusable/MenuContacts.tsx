@@ -29,12 +29,14 @@ const MenuContacts = () => {
     const [showModalFriendRequest, setShowModalFriendRequest] = useState<boolean>(false);
     const [friendRequests, setFriendRequests] = useState<confirmRequestType[]>([
         {
+            id: "1",
             name: "Samsudin",
             time: 1694836137714,
             profilePicturePath: "/assets/images/avatar-dummy.png",
             type: "FRIEND",
         },
         {
+            id: "2",
             name: "Bagas",
             time: 1694836137714,
             profilePicturePath: "/assets/images/avatar2-dummy.png",
@@ -73,13 +75,13 @@ const MenuContacts = () => {
                     ))}
                 </div>
 
-                <div className="mt-auto p-6">
+                <div className="sticky p-6 mt-auto mb-9 lg:mb-0">
                     <Button variant="PRIMARY" action={() => setShowModalFriendRequest(!showModalFriendRequest)}>
-                        <div className="flex gap-x-5 justify-center">
+                        <div className="flex justify-center gap-x-5">
                             <div className="w-5 first:fill-white">
                                 <MailSvg />
                             </div>
-                            <span className="text-white text-sm">Friend Request</span>
+                            <span className="text-sm text-white">Friend Request</span>
                         </div>
                     </Button>
 
