@@ -1,5 +1,7 @@
 import ConfirmRequestProps from "@/features/main/type/confirmRequest";
 import SearchUserSvg from "@/shared/icons/SearchUser";
+import { useState } from "react";
+import ModalFriendRequestDetail from "./ModalFriendRequestDetail";
 
 type confirmationButtonProps = {
     text?: string;
@@ -17,6 +19,8 @@ const ConfirmationButton = ({ text, variant, action, children }: confirmationBut
 };
 
 const ConfirmRequest = ({ id, name, time, profilePicturePath, type }: ConfirmRequestProps) => {
+    const [showDetails, setShowDetails] = useState<boolean>(false);
+    const [detailsId, setDetailsId] = useState<string>("1")
     const rejectRequestHandler = (id: string, type: "FRIEND" | "GROUP") => {
         console.log("Reject");
     };
@@ -26,10 +30,12 @@ const ConfirmRequest = ({ id, name, time, profilePicturePath, type }: ConfirmReq
     };
 
     const viewDetailsHandler = (id: string, type: "FRIEND" | "GROUP") => {
-        console.log("view");
+        setDetailsId(id)
+        setShowDetails(true);
     };
 
     return (
+        <>
         <div className="flex gap-x-5 px-6 py-4 bg-white hover:bg-primary/5">
             <img className="w-11 h-11 rounded-lg border border-black/10" src={profilePicturePath} alt={`${name} profile picture`} />
             <div className="flex flex-col gap-y-2">
@@ -46,6 +52,8 @@ const ConfirmRequest = ({ id, name, time, profilePicturePath, type }: ConfirmReq
                 </div>
             </div>
         </div>
+        <ModalFriendRequestDetail id={detailsId} show={showDetails} toggleShow={() => setShowDetails(!showDetails)}/>
+        </>
     );
 };
 
