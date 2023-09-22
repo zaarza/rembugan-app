@@ -1,8 +1,8 @@
+import { useFormik } from "formik";
+
 import Modal from "@/features/main/ui/reusable/Modal";
 import InputGroup from "@/features/main/ui/reusable/InputGroup";
-import { useFormik } from "formik";
-import { useEffect, useState } from "react";
-import Button from "./Button";
+import Button from "@/features/main/ui/reusable/Button";
 
 type ModalMyProfileProps = {
     show: boolean;

@@ -10,7 +10,7 @@ type ProfileButtonProps = {
 const ProfileButton = ({ profilePicturePath }: ProfileButtonProps) => {
     const [showMenu, setShowMenu] = useState<boolean>(false);
     const menuRef = useOnClickOutside(() => setShowMenu(false));
-    const [showModalMyProfile, setShowModalMyProfile] = useState<boolean>(true);
+    const [showModalMyProfile, setShowModalMyProfile] = useState<boolean>(false);
 
     return (
         <>
