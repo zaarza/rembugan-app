@@ -1,4 +1,5 @@
 import { createPortal } from "react-dom";
+import { useState, useEffect } from "react";
 
 import ButtonIcon from "@/features/main/ui/reusable/ButtonIcon";
 import CloseSvg from "@/shared/icons/Close";
@@ -11,7 +12,13 @@ type ModalProps = {
 };
 
 const Modal = ({ title, show, toggleShow, children }: ModalProps) => {
-    if (show) {
+    const [documentReady, setDocumentReady] = useState<boolean>(false);
+
+    useEffect(() => {
+      setDocumentReady(true);
+    }, [])
+
+    if (show && documentReady) {
         return (
             <>
                 {createPortal(
