@@ -1,0 +1,15 @@
+version: 2.21.0
+services:
+  fe-rembugan:
+    container_name: fe-rembugan
+    build: ./frontend
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/app
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 500M
+    entrypoint: yarn dev
