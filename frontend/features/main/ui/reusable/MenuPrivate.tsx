@@ -34,7 +34,7 @@ const MenuPrivate = () => {
         query;
     };
 
-    const onClickItem = (id?: number) => {
+    const onClickMenuItem = (id: number) => {
         setActiveConversationId(id);
         setShowConversation(true);
         setActiveConversationType("PRIVATE");
@@ -53,7 +53,7 @@ const MenuPrivate = () => {
 
             <div className="flex flex-col overflow-auto pb-36">
                 {messages.map((messageItem, index: number) => (
-                    <MenuItem name={messageItem.name} message={messageItem.message} time={messageItem.time} profilePicturePath={messageItem.profilePicturePath} key={`message-${index}`} action={() => onClickItem(messageItem.user_id)} />
+                    <MenuItem name={messageItem.name} message={messageItem.message} time={messageItem.time} profilePicturePath={messageItem.profilePicturePath} key={`message-${index}`} action={() => onClickMenuItem(messageItem.user_id)} />
                 ))}
             </div>
         </div>

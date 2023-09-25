@@ -10,7 +10,7 @@ import ConversationSidebar from "@/features/main/ui/reusable/ConversationSidebar
 import ConversationNull from "@/features/main/ui/reusable/ConversationNull";
 
 const Conversation = () => {
-    const {showConversation, activeConversationId} = useAppStore((state: any) => ({activeConversationId: state.activeConversationId, showConversation: state.showConversation}))
+    const {showConversation, activeConversationId, activeConversationType} = useAppStore((state: any) => ({activeConversationId: state.activeConversationId, showConversation: state.showConversation, activeConversationType: state.activeConversationType}))
     const [showSidebar, setShowSidebar] = useState<boolean>(false)
 
     if (activeConversationId === null) {
@@ -28,7 +28,8 @@ const Conversation = () => {
                 <ConversationForm />
             </div>
 
-            <ConversationSidebar toggleSidebar={() => setShowSidebar(!showSidebar)} show={showSidebar} data={{name: "Samsudin", id: 1234, description: "Lorem ipsum dolor sit amet", email: "email@email.com", joinedAt: 1695194444327, status: "Available"}} />
+            {activeConversationType === "PRIVATE" && <ConversationSidebar toggleSidebar={() => setShowSidebar(!showSidebar)} show={showSidebar} data={{name: "Samsudin", id: 1234, description: "Lorem ipsum dolor sit amet", email: "email@email.com", joinedAt: 1695194444327, status: "Available"}} />}
+            {activeConversationType === "GROUP" && <ConversationSidebar toggleSidebar={() => setShowSidebar(!showSidebar)} show={showSidebar} data={{name: "BMX Club", id: 1234, description: "Lorem ipsum dolor sit amet", membership: 10, createdAt: 1695194444327, creator: "Samsudin"}} />}
         </div>
     );
 };

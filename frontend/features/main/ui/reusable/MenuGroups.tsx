@@ -9,8 +9,10 @@ import MenuItem from "@/features/main/ui/reusable/MenuItem";
 import Searchbar from "@/features/main/ui/reusable/MenuSearchbar";
 import Modal from "@/features/main/ui/reusable/Modal";
 import PlusSvg from "@/shared/icons/Plus";
+import useAppStore from "@/store/app.store";
 
 type groupType = {
+    id: string;
     name: string;
     members: number;
     profilePicturePath?: string;
@@ -19,6 +21,7 @@ type groupType = {
 const MenuGroups = () => {
     const [groups, setGroups] = useState<groupType[]>([
         {
+            id: "2",
             name: "Class Discussion",
             members: 20,
             profilePicturePath: "/assets/images/avatar-dummy.png",
@@ -41,7 +44,11 @@ const MenuGroups = () => {
     const [showGroupInvitationModal, setShowGroupInvitationModal] = useState<boolean>(false);
     const [query, setQuery] = useState<string>("");
     const [showJoinGroupModal, setShowJoinGroupModal] = useState<boolean>(false);
-    const [showFriendRequestModal, setShowFriendRequestModal] = useState<boolean>(false);
+    const { setShowConversation, setActiveConversationType, setActiveConversationId } = useAppStore((state: any) => ({
+        setShowConversation: state.setShowConversation,
+        setActiveConversationType: state.setActiveConversationType,
+        setActiveConversationId: state.setActiveConversationId,
+    }));
     const [showCreateGroupModal, setShowCreateGroupModal] = useState<boolean>(false);
 
     const form = useFormik({
@@ -71,6 +78,12 @@ const MenuGroups = () => {
         event.preventDefault();
     };
 
+    const onClickMenuItem = (id: string) => {
+        setActiveConversationType("GROUP");
+        setActiveConversationId(id);
+        setShowConversation(true);
+    };
+
     useEffect(() => {
         // TODO: Api integration for query
     }, [query]);
@@ -88,7 +101,7 @@ const MenuGroups = () => {
 
                 <div className="flex flex-col overflow-auto pb-36">
                     {groups.map((groupItem, index: number) => (
-                        <MenuItem name={groupItem.name} message="Adi: Hello World" profilePicturePath={groupItem.profilePicturePath} key={`group-${index}`} action={() => {}} />
+                        <MenuItem name={groupItem.name} message="Adi: Hello World" profilePicturePath={groupItem.profilePicturePath} key={`group-${index}`} action={() => onClickMenuItem(groupItem.id)} />
                     ))}
                 </div>
 
