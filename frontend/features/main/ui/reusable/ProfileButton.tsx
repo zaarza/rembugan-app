@@ -19,7 +19,7 @@ const ProfileButton = ({ profilePicturePath }: ProfileButtonProps) => {
                     <img className="w-full" src={profilePicturePath} alt="User profile picture" />
                 </button>
 
-                <div className={`absolute bg-white rounded-lg border right-0 lg:right-[inherit] lg:left-0 border-black/10  duration-300 ${showMenu ? "visible opacity-100 bottom-[150%] lg:left-[200%] lg:bottom-0" : "invisible opacity-0 bottom-0"}`}>
+                <div className={`absolute shadow-lg bg-white rounded-lg border right-0 lg:right-[inherit] lg:left-0 border-black/10  duration-300 ${showMenu ? "visible opacity-100 bottom-[150%] lg:left-[200%] lg:bottom-0" : "invisible opacity-0 bottom-0"}`}>
                     <button className="w-full px-5 py-3 bg-white text-slate-800 whitespace-nowrap hover:brightness-95" onClick={() => setShowModalMyProfile(true)}>Profile Details</button>
                     <button className="w-full px-5 py-3 text-center bg-white text-slate-800 whitespace-nowrap hover:brightness-95">Logout</button>
                 </div>
