@@ -1,4 +1,5 @@
 import { IconLineDoubleCheckMark } from '@/shared/Icons';
+import timeFormatter from '@/features/main/utils/timeFormatter';
 
 type ConversationCardProps = {
   name: string;
@@ -25,7 +26,7 @@ const ConversationCard = ({
                       position === 'LEFT' && 'flex-row-reverse'
                   }`}
               >
-                  <small className='text-xs text-black/40'>{time}</small>
+                  <small className='text-xs text-black/40'>{timeFormatter(time)}</small>
                   <small className='text-base font-medium'>{name}</small>
               </div>
               {is_readed !== undefined && (

@@ -19,12 +19,12 @@ type groupType = {
 
 const MenuGroups = () => {
   const [groups, setGroups] = useState<groupType[]>([
-    //   {
-    //       id: '2',
-    //       name: 'Class Discussion',
-    //       members: 20,
-    //       profilePicturePath: '/assets/images/avatar-dummy.png',
-    //   },
+      {
+          id: '2',
+          name: 'Class Discussion',
+          members: 20,
+          profilePicturePath: '/assets/images/avatar-dummy.png',
+      },
   ]);
   const [query, setQuery] = useState<string>('');
   const {
