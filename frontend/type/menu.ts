@@ -1,7 +1,3 @@
-enum menu {
-    PRIVATE = "PRIVATE",
-    CONTACTS = "CONTACTS",
-    GROUPS = "GROUPS",
-}
+type menu = "PRIVATE" | "CONTACTS" | "GROUPS"
 
 export default menu;

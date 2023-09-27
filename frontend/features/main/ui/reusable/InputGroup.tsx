@@ -1,6 +1,3 @@
-import Error from "@/components/Elements/InputGroup/Error";
-import Input from "@/components/Elements/InputGroup/Input";
-
 type InputGroupProps = {
     formikObject: { [key: string]: any };
     type: string;
@@ -9,12 +6,41 @@ type InputGroupProps = {
     label?: string;
 };
 
-const InputGroup = ({ type, name, placeholder, formikObject, label }: InputGroupProps) => {
+const InputGroup = ({
+    type,
+    name,
+    placeholder,
+    formikObject,
+    label,
+}: InputGroupProps) => {
     return (
-        <div className="form-group flex flex-col gap-y-3">
-            <label className="text-base text-slate-800" htmlFor={name}>{label}</label>
-            <input className={`bg-background focus:outline-primary rounded-lg py-4 px-8 border ${formikObject.status?.errors[name] ? "border-red-500" : "border-black/10"}`} type={type} name={name} id={name} placeholder={placeholder || name[0].toUpperCase() + name.slice(1)} {...formikObject.getFieldProps(name)} disabled={formikObject.isSubmitting} />
-            {formikObject.status?.errors[name] && <small className="self-end text-red-500 text-base">formikObject.status.errors[name]</small>}
+        <div className='form-group flex flex-col gap-y-3'>
+            <label
+                className='text-base text-slate-800'
+                htmlFor={name}
+            >
+                {label}
+            </label>
+            <input
+                className={`bg-background focus:outline-primary rounded-lg py-4 px-8 border ${
+                    formikObject.status?.errors[name]
+                        ? 'border-red-500'
+                        : 'border-black/10'
+                }`}
+                type={type}
+                name={name}
+                id={name}
+                placeholder={
+                    placeholder || name[0].toUpperCase() + name.slice(1)
+                }
+                {...formikObject.getFieldProps(name)}
+                disabled={formikObject.isSubmitting}
+            />
+            {formikObject.status?.errors[name] && (
+                <small className='self-end text-red-500 text-base'>
+                    formikObject.status.errors[name]
+                </small>
+            )}
         </div>
     );
 };

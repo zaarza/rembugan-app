@@ -3,7 +3,7 @@ type message = {
     message: string;
     time: number;
     profilePicturePath?: string;
-    user_id: number;
+    user_id: string;
 };
 
 export default message;
