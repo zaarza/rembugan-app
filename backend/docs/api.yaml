@@ -121,7 +121,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        204:
           description: Update user information success
           content:
             application/json:
@@ -138,7 +138,7 @@ paths:
               example:
                 description: Exampe update user information success
                 value:
-                  status: 200
+                  status: 204
                   data:
                     id: user1
                     name: Robert Alvin
@@ -150,6 +150,34 @@ paths:
                     last_seen: 1695883859606
                     joined_at: 1695883859606
                   message: Update user information success
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                status:
+                  type: string
+                avatar:
+                  type: string
+                email:
+                  type: string
+                is_online:
+                  type: boolean
+                last_seen:
+                  type: number
+  /users/{userId}/getOnline:
+    put:
+      tags:
+        - Users
+      summary: Update user online status
+      responses:
+        204:
+          description: Update user online status success
   /users:
     post:
       tags:
@@ -413,11 +441,11 @@ paths:
                         type: string
                   message:
                     type: string
-  /messages/{messageId}:
+  /messages/{messageId}/markReaded:
     put:
       tags:
         - Message
-      summary: Update message information
+      summary: Mark message as readed
       parameters:
         - name: messageId
           in: path
@@ -426,7 +454,7 @@ paths:
             type: string
       responses:
         204:
-          description: Update message information successs
+          description: Mark message as readed success
   /inbox:
     get:
       tags:
@@ -470,11 +498,11 @@ paths:
       responses:
         201:
           description: Post new inbox success
-  /inbox/{inboxId}:
+  /inbox/{inboxId}/markReaded:
     put:
       tags:
         - Inbox
-      summary: Update inbox
+      summary: Update inbox readed status
       parameters:
         - name: inboxId
           in: path
@@ -483,7 +511,29 @@ paths:
             type: string
       responses:
         204:
-          description: Update inbox success
+          description: Update inbox readed status success
+  /inbox/{inboxId}/response:
+    put:
+      tags:
+        - Inbox
+      summary: Update inbox response status
+      parameters:
+        - name: inboxId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Update inbox response status success
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                is_responded:
+                  type: boolean
   /groups:
     get:
       tags:
