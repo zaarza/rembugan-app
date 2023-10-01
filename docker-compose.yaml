@@ -1,15 +1,53 @@
-version: 2.21.0
+version: 2.22.0
 services:
   fe-rembugan:
     container_name: fe-rembugan
-    build: ./frontend
+    image: node:lts-alpine
     ports:
       - 3000:3000
     volumes:
       - ./frontend:/app
+    working_dir: /app
     deploy:
       resources:
         limits:
-          cpus: '1.5'
+          cpus: "1.5"
           memory: 700M
-    entrypoint: yarn dev
+    entrypoint: yarn dev  
+  be-rembugan:
+    container_name: be-rembugan
+    image: php:8.1-fpm
+    ports:
+      - 8000:8000
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 500M
+    depends_on:
+      - db-rembugan
+    entrypoint: php artisan serve --host 0.0.0.0
+  db-rembugan:
+    image: mysql
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    command: --default-authentication-plugin=mysql_native_password
+    # restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: rembugan_app
+  pma-rembugan:
+    image: phpmyadmin
+    # restart: always
+    ports: 
+      - 8001:80
+    environment:
+      - PMA_ARBITRARY=1
+    depends_on:
+      - db-rembugan
+networks:
+  defaults:
+    driver: bridge
