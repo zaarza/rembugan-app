@@ -16,7 +16,7 @@ services:
     entrypoint: yarn dev  
   be-rembugan:
     container_name: be-rembugan
-    image: php:8.1-fpm
+    build: ./backend
     ports:
       - 8000:8000
     volumes:
@@ -30,8 +30,9 @@ services:
     depends_on:
       - db-rembugan
     entrypoint: php artisan serve --host 0.0.0.0
-  db-rembugan:
+  db-rembphpugan:
     image: mysql
+    container_name: db-rembugan
     # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
     # (this is just an example, not intended to be a production configuration)
     command: --default-authentication-plugin=mysql_native_password
@@ -39,8 +40,11 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: rembugan_app
+    ports:
+      - 3306:3306
   pma-rembugan:
     image: phpmyadmin
+    container_name: pma-rembugan
     # restart: always
     ports: 
       - 8001:80
@@ -48,6 +52,3 @@ services:
       - PMA_ARBITRARY=1
     depends_on:
       - db-rembugan
-networks:
-  defaults:
-    driver: bridge
