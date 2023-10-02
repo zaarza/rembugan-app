@@ -2,22 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class UserTest extends TestCase
 {
+    // Reset database after test
     use RefreshDatabase;
-    /**
-     * A basic feature test example.
-     */
-    // public function test_example(): void
-    // {
-    //     $response = $this->get('/');
-
-    //     $response->assertStatus(200);
-    // }
 
     public function testRegisterSuccess()
     {
@@ -74,5 +68,24 @@ class UserTest extends TestCase
             ],
             'message' => "Register failed, credentials, doesn't meet the requirements",
         ]);
+    }
+
+    public function testGetCsrfCookie()
+    {
+        $this->get('/sanctum/csrf-cookie')->assertCookie("XSRF-TOKEN");
+    }
+
+    public function testLoginUser()
+    {
+        $user = User::factory()->create();
+        $token = $this->get('/sanctum/csrf-cookie')->getCookie('XSRF-TOKEN')->getValue();
+        
+        $this->post('/api/users/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ], [
+            'accept' => 'application/json',
+            'X-XSRF-TOKEN' => $token
+        ])->assertStatus(200);
     }
 }
