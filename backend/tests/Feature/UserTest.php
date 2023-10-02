@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -87,5 +88,28 @@ class UserTest extends TestCase
             'accept' => 'application/json',
             'X-XSRF-TOKEN' => $token
         ])->assertStatus(200);
+    }
+
+    public function testGetUserDetailsSuccess()
+    {
+        $user = User::factory()->create();
+
+        $this->get('/api/users/' . $user->id)->assertStatus(200)->assertJson([
+            'status' => 200,
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name
+            ],
+            'message' => 'Get user detail success'
+        ]);
+    }
+
+    public function testGetUserDetailsNotFound()
+    {
+        $this->get('/api/users/random')->assertStatus(404)->assertJson([
+            'status' => 404,
+            'data' => null,
+            'message' => 'User not found'
+        ]);
     }
 }

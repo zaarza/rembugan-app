@@ -44,4 +44,22 @@ class UserController extends Controller
             'message' => 'Login success'
         ], 200);
     }
+
+    public function details(string $id): JsonResponse {
+        $user = User::where('id', $id)->first();
+
+        if (!$user) {
+            throw new HttpResponseException(response()->json([
+                'status' => 404,
+                'data' => null,
+                'message' => "User not found"
+            ], 404));
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data' => new UserResource($user),
+            'message' => "Get user detail success"
+        ]);
+    }
 }
