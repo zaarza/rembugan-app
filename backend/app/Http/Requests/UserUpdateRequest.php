@@ -5,9 +5,8 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Http\JsonResponse;
 
-class UserLoginRequest extends FormRequest
+class UserUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,17 +24,20 @@ class UserLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'name' => 'required|max:30',
             'email' => 'required|email',
-            'password' => 'required'
+            'description' => 'nullable|max:100',
+            'status' => 'nullable|max:30',
+            'avatar' => 'nullable|mimes:jpeg,jpg,png|max:3072'
         ];
     }
 
-    protected function failedValidation(Validator $validator): JsonResponse
+    protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([
             'status' => 403,
             'data' => $validator->getMessageBag(),
-            'message' => "Login failed, invalid credentials"
+            'message' => "Update user failed, credentials doesn't meet requirements"
         ], 403));
     }
 }

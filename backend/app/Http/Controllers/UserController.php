@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -60,6 +61,42 @@ class UserController extends Controller
             'status' => 200,
             'data' => new UserResource($user),
             'message' => "Get user detail success"
+        ]);
+    }
+
+    public function update(UserUpdateRequest $request, string $id) {
+        $data = $request->validated();
+
+        // User not found
+        if (!$id || !$user = User::where('id', $id)->first()) {
+            throw new HttpResponseException(response()->json([
+                'status', 404,
+                'data' => null,
+                'message' => 'User not found'
+            ], 404));
+        }
+
+        // Update avatar if image uploaded
+        if ($avatar = $request->file('avatar')) {
+            $path = $avatar->storeAs('public/users/avatar', uniqid() . '.' . $avatar->extension());
+            $link = Storage::url($path);
+
+            // Delete old avatar file if exist
+            if ($oldAvatar = $user->avatar) {
+                Storage::delete($oldAvatar);
+            }
+            
+            $data['avatar'] = $link;
+            $user->avatar = $request->avatar;
+        }
+
+        $user->fill($data);
+        $user->save();
+
+        return response()->json([
+            'status' => 200,
+            'data' => new UserResource($user),
+            'message' => "Update user details success"
         ]);
     }
 }

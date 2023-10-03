@@ -6,6 +6,8 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -111,5 +113,40 @@ class UserTest extends TestCase
             'data' => null,
             'message' => 'User not found'
         ]);
+    }
+
+    public function testUpdateUserDetails() {
+        Storage::fake();
+        
+        $user = User::factory()->create();
+        $response = $this->post('/api/users/' . $user->id, [
+            'name' => 'name updated',
+            'email' => 'email@updated.com',
+            'avatar' => UploadedFile::fake()->image('fake.png')
+        ]);
+        
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => 200,
+            'data' => [
+                'name' => 'name updated',
+                'email' => 'email@updated.com',
+            ]
+        ]);
+
+        // check user avatar updated
+        $user = User::where('id', $user->id)->first();
+        $this->assertNotNull($user->avatar);
+        
+        // avatar stored to disk
+        $this->assertNotEmpty(Storage::allFiles('public/users/avatar'));
+
+        // delete old avatar if exist
+        $this->post('/api/users/'. $user->id, [
+            'avatar' => UploadedFile::fake()->image('fake.png')
+        ]);
+        $this->assertCount(1, Storage::allFiles('public/users/avatar'));
+        
+        $user->delete();
     }
 }
