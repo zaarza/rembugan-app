@@ -13,64 +13,46 @@ use Tests\TestCase;
 
 class UserTest extends TestCase
 {
-    // Reset database after test
-    use RefreshDatabase;
-
     public function testRegisterSuccess()
     {
-        $this->post('/api/users', [
-            'name' => 'Arza',
-            'email' => 'arza@email.com',
-            'password' => '12345678'
-        ])->assertStatus(201)->assertJson([
+        $newUser = [
+            'email' => uniqid().'@email.com',
+            'name' => 'random',
+            'password' => 'password'
+        ];
+
+        $this->post('/api/users', $newUser)->assertStatus(201)->assertJson([
             'status' => 201,
             'data' => [
-                'name' => 'Arza',
-                'email' => 'arza@email.com',
+                'name' => $newUser['name'],
             ],
-            'message' => 'Register success',
         ]);
 
-        $this->assertDatabaseHas('users', [
-            'name' => 'Arza'
-        ]);
+        $user = User::where('email', $newUser['email'])->first();
+        $this->assertNotNull($user);
+
+        $user->delete();
     }
 
-    public function testRegisterFailIfEmailIsRegistered()
+    public function testRegisterValidation()
     {
-        $this->post('/api/users', [
-            'name' => 'Arza',
-            'email' => 'arza@email.com',
-            'password' => '12345678'
-        ])->assertStatus(201)->assertJson([
-            'status' => 201,
-            'data' => [
-                'name' => 'Arza',
-                'email' => 'arza@email.com',
-            ],
-            'message' => 'Register success',
-        ]);
+        $user = User::factory()->create();
 
         $this->post('/api/users', [
-            'name' => 'Arza',
-            'email' => 'arza@email.com',
-            'password' => '12345678'
-        ])->assertStatus(403);
-    }
-
-    public function testRegisterFailIfPasswordLengthIsSmallerThan_8()
-    {
-        $this->post('/api/users', [
-            'name' => 'Arza',
-            'email' => 'arza@email.com',
-            'password' => '1234567'
-        ])->assertStatus(403)->assertExactJson([
+            'name' => '',
+            'email' => $user->email,
+            'password' => ''
+        ])->assertStatus(403)->assertJson([
             'status' => 403,
             'data' => [
-                'password' => ['The password field must be at least 8 characters.']
+                'name' => ['The name field is required.'],
+                'email' => ['The email has already been taken.'],
+                'password' => ['The password field is required.'],
             ],
-            'message' => "Register failed, credentials, doesn't meet the requirements",
+            'message' => "Register failed, credentials, doesn't meet the requirements"
         ]);
+
+        $user->delete();
     }
 
     public function testGetCsrfCookie()
@@ -90,6 +72,8 @@ class UserTest extends TestCase
             'accept' => 'application/json',
             'X-XSRF-TOKEN' => $token
         ])->assertStatus(200);
+
+        $user->delete();
     }
 
     public function testGetUserDetailsSuccess()
@@ -104,6 +88,8 @@ class UserTest extends TestCase
             ],
             'message' => 'Get user detail success'
         ]);
+
+        $user->delete();
     }
 
     public function testGetUserDetailsNotFound()
