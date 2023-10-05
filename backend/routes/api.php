@@ -23,3 +23,5 @@ Route::post('/users', [\App\Http\Controllers\UserController::class, 'register'])
 Route::post('/users/login', [\App\Http\Controllers\UserController::class, 'login']);
 Route::get('/users/{id}', [\App\Http\Controllers\UserController::class, 'details']);
 Route::post('/users/{id}', [\App\Http\Controllers\UserController::class, 'update']);
+
+Route::get('/contacts', [App\Http\Controllers\ContactController::class, 'list'])->middleware('auth:sanctum');

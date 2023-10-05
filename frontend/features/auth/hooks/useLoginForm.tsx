@@ -1,7 +1,6 @@
-import axios from 'axios';
 import { useFormik } from 'formik'
 import * as Yup from "yup";
-import { getCsrfCookie } from '../data/api';
+import { getCsrfCookie, userLogin } from '../data/api';
 import { useRouter } from 'next/navigation';
 
 type FormInitialValues = {
@@ -10,7 +9,6 @@ type FormInitialValues = {
 };
 
 const useLoginForm = () => {
-    axios.defaults.withCredentials = true;
     const router = useRouter();
 
     const form = useFormik({
@@ -26,11 +24,6 @@ const useLoginForm = () => {
     });
 
     const submit = async (values: FormInitialValues) => {
-        const userLogin = async ({email, password}: {email: string, password: string}) => {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/users/login`, {email, password})
-            return response;
-        };
-
         try {
             await getCsrfCookie();
             await userLogin(values);

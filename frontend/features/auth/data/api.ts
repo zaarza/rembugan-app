@@ -21,3 +21,8 @@ export const userRegister = async ({
     );
     return response;
 };
+
+export const userLogin = async ({email, password}: {email: string, password: string}) => {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/users/login`, {email, password})
+    return response;
+};
