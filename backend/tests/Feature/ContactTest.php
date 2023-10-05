@@ -82,4 +82,47 @@ class ContactTest extends TestCase
         $this->post('/api/contacts/' . uniqid(), [], ['accept' => 'application/json'])->assertStatus(404);
         $this->assertEmpty($user->contacts);
     }
+
+    public function testDeleteContact() {
+        DB::beginTransaction();
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+
+        $this->assertEmpty($user1->contacts);
+
+        Sanctum::actingAs($user1);
+        $this->post('/api/contacts/' . $user2->id, [], ['accept' => 'application/json'])->assertStatus(201);
+        $this->assertNotEmpty(Contact::where([
+            'added_by' => $user1->id,
+            'user_id' => $user2->id
+        ])->first());
+
+        $this->delete('api/contacts/'. $user2->id, [], ['accept' => 'application/json'])->assertStatus(200);
+        $this->assertEmpty($user1->contacts);
+    }
+
+    public function testDeleteContactFailIfNoUserWithGivenId() {
+        DB::beginTransaction();
+        $user = User::factory()->create();
+
+        Sanctum::actingAs($user);
+        $this->delete('/api/contacts/'. uniqid(), [], ['accept' => 'application/json'])
+            ->assertStatus(404)
+            ->assertJson([
+                'message' => 'User not found'
+            ]);
+    }
+
+    public function testDeleteContactFailIfUserNotInContacts() {
+        DB::beginTransaction();
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+        
+        Sanctum::actingAs($user1);
+        $this->delete('/api/contacts/' . $user2->id, [], ['accept' => 'application/json'])
+            ->assertStatus(404)
+            ->assertJson([
+                'message' => 'User is not exist in contacts',
+            ]);
+    }
 }

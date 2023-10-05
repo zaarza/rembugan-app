@@ -67,4 +67,45 @@ class ContactController extends Controller
             ], 500);
         }
     }
+
+    public function delete(string$id, Request $request) {
+        //  fail if no user with given id
+        if (!User::where('id', $id)->first()) {
+            throw new HttpResponseException(response()->json([
+                'status' => 404,
+                'data' => null,
+                'message' => 'User not found'
+            ], 404));
+        }
+
+        // fail if that user id is not in current user contacts
+        if (!$contact = Contact::where([
+            'user_id' => $id,
+            'added_by' => $request->user()->id,
+        ])->first()) {
+            throw new HttpResponseException(response()->json([
+                'status' => 404,
+                'data' => null,
+                'message' => 'User is not exist in contacts'
+            ], 404));
+        }
+
+        DB::beginTransaction();
+        try {
+            $contact->delete();
+            DB::commit();
+            return response()->json([
+                'status' => 200,
+                'data' => null,
+                'message' => 'User deleted from contacts success'
+            ], 200);
+        } catch (ErrorException $error) {
+            DB::rollBack();
+            throw new HttpResponseException(response()->json([
+                'status' => 500,
+                'data' => null,
+                'message' => $error->getMessage(),
+            ], 500));
+        }
+    }
 }
