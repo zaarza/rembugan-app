@@ -22,7 +22,7 @@ class ContactController extends Controller
     }
 
     public function add(string $id, Request $request) {
-        if (!User::where('id', $id)) {
+        if (!User::where('id', $id)->first()) {
             throw new HttpResponseException(response()->json([
                 'status' => 404,
                 'data' => null,

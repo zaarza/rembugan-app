@@ -73,4 +73,14 @@ class ContactTest extends TestCase
         $this->assertCount(1, $user1->contacts);
         $this->assertCount(1, $user2->contacts);
     }
+
+    public function testAddContactFailIfNoUserWithGivenId() {
+        DB::beginTransaction();
+        $user = User::factory()->create();
+
+        Sanctum::actingAs($user);
+        $response = $this->post('/api/contacts/' . uniqid(), [], ['accept' => 'application/json']);
+        dd($response);
+        $this->assertEmpty($user->contacts);
+    }
 }
