@@ -69,7 +69,7 @@ class ContactTest extends TestCase
         $this->assertCount(1, $user1->contacts);
         $this->assertCount(1, $user2->contacts);
 
-        $this->post('/api/contacts/'. 'random', [], ['accept' => 'application/json'])->assertStatus(201);
+        $this->post('/api/contacts/'.  $user2->id, [], ['accept' => 'application/json'])->assertStatus(201);
         $this->assertCount(1, $user1->contacts);
         $this->assertCount(1, $user2->contacts);
     }
@@ -79,8 +79,7 @@ class ContactTest extends TestCase
         $user = User::factory()->create();
 
         Sanctum::actingAs($user);
-        $response = $this->post('/api/contacts/' . uniqid(), [], ['accept' => 'application/json']);
-        dd($response);
+        $this->post('/api/contacts/' . uniqid(), [], ['accept' => 'application/json'])->assertStatus(404);
         $this->assertEmpty($user->contacts);
     }
 }
