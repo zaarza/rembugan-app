@@ -1,6 +1,5 @@
-import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
+import { useFormik } from 'formik';
 import { useRouter } from 'next/navigation'
 import { getCsrfCookie, userRegister } from '@/features/auth/data/api';
 
@@ -11,9 +10,7 @@ type FormInitialValues = {
 };
 
 const useRegisterForm = () => {
-    axios.defaults.withCredentials = true;
     const router = useRouter();
-
     const form = useFormik({
         initialValues: {
             name: '',
