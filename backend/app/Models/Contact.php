@@ -23,4 +23,9 @@ class Contact extends Model
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
+
+    public function scopeOfSaved($query, $id)
+    {
+        return $query->where('added_by', $id);
+    }
 }

@@ -25,3 +25,4 @@ Route::get('/users/{id}', [\App\Http\Controllers\UserController::class, 'details
 Route::post('/users/{id}', [\App\Http\Controllers\UserController::class, 'update']);
 
 Route::get('/contacts', [App\Http\Controllers\ContactController::class, 'list'])->middleware('auth:sanctum');
+Route::post('/contacts/{id}', [App\Http\Controllers\ContactController::class, 'add'])->middleware('auth:sanctum');
