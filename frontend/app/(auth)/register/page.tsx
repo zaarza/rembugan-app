@@ -9,11 +9,9 @@ import useRegisterForm from "@/features/auth/hooks/useRegisterForm";
 
 const Register = () => {
     const form = useRegisterForm();
-
     return (
         <form className="credentials flex flex-col gap-y-12 px-8 py-12 lg:w-full lg:max-w-[40%] lg:px-12 justify-center" onSubmit={form.handleSubmit}>
             <Title subtitle="Login into your account" />
-
             <div className="flex flex-col gap-y-5">
                 <Input name="name" type="text" label="Name" placeholder="Name" disabled={form.isSubmitting} formikObject={form} />
                 <Input name="email" type="text" label="Email address" placeholder="Email address" disabled={form.isSubmitting} formikObject={form} />
