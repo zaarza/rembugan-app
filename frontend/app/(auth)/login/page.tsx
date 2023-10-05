@@ -22,7 +22,7 @@ const Login = () => {
             <SubmitButton displayText="Login" disabled={form.isSubmitting} />
 
             <small className="self-center text-base">
-                Doesn't have an account?{" "}
+                {"Doesn't"} have an account?{" "}
                 <Link className="text-primary" href="/register">
                     Register
                 </Link>

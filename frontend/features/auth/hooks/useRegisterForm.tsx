@@ -2,6 +2,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { useRouter } from 'next/navigation'
+import { getCsrfCookie, userRegister } from '@/features/auth/data/api';
 
 type FormInitialValues = {
     name: string;
@@ -28,28 +29,9 @@ const useRegisterForm = () => {
     });
 
     const submit = async (values: FormInitialValues) => {
-        let result;
-        const userRegister = async ({
-            name,
-            email,
-            password,
-        }: FormInitialValues) => {
-            const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/users`,
-                { name, email, password }
-            );
-            return response;
-        };
-
-        const generateCsrfCookie = async () => {
-            await axios.get(
-                `${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`
-            );
-        };
-
         try {
-            await generateCsrfCookie();
-            result = await userRegister(values);
+            await getCsrfCookie();
+            await userRegister(values);
             router.push('/login');
         } catch (error: any) {
             form.setErrors(error.response.data.data);
