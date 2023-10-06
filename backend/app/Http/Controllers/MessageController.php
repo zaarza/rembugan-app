@@ -7,11 +7,12 @@ use App\Models\Contact;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
-   public function post(MessagePostRequest $request) {
+  public function post(MessagePostRequest $request) {
     $data = $request->validated();
 
     // if user id invalid
@@ -47,4 +48,31 @@ class MessageController extends Controller
       'message' => 'Message send success'
     ], 201);
    }
+ 
+  
+  //  get initial current user message
+  public function getInitialMessages(Request $request): JsonResponse {
+    $result = null;
+
+    // group by id, sort by latest
+    foreach (collect($request->user()->messages)->sortBy('sent_at', 2, true) as $message) {
+      // limit only 1/sender_id
+      if (empty($result[$message->id])) {
+        $result[$message['sender_id']] = [
+          'unreaded' => count(Message::where([
+            'is_readed' => false,
+            'receiver_id' => $request->user()->id,
+            'sender_id' => $message->sender_id,
+          ])->get()),
+          'data' => $message,
+        ];
+      }
+    }
+
+    return response()->json([
+      'status' => 200,
+      'data' => $result,
+      'message' => 'Get all message success',
+    ], 200);
+  }
 }

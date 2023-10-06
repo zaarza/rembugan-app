@@ -97,4 +97,50 @@ class MessageTest extends TestCase
 
         $this->assertEmpty(Message::where('sender_id', $user1->id)->first());
     }
+
+    public function testGetInitialMessage() {
+        DB::beginTransaction();
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+        $user3 = User::factory()->create();
+
+        Message::create([
+            'content' => "Message from $user2->name",
+            'receiver_id' => $user1->id,
+            'sender_id' => $user2->id
+        ]);
+
+        Message::create([
+            'content' => "Message from $user2->name 2",
+            'receiver_id' => $user1->id,
+            'sender_id' => $user2->id
+        ]);
+
+        Message::create([
+            'content' => "Message from $user3->name",
+            'receiver_id' => $user1->id,
+            'sender_id' => $user3->id
+        ]);
+
+        Sanctum::actingAs($user1);
+        $this->get('/api/messages/getInitialMessages', ['accept' => 'application/json'])
+            ->assertStatus(200)
+            ->assertJson([
+                'status' => 200,
+                'data' => [
+                    $user2->id => [
+                        'unreaded' => 2,
+                        'data' => [
+                            'content' => "Message from $user2->name 2"
+                        ]
+                    ],
+                    $user3->id => [
+                        'unreaded' => 1,
+                        'data' => [
+                            'content' => "Message from $user3->name"
+                        ]
+                    ]
+                ]
+            ]);
+    }
 }

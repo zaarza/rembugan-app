@@ -422,11 +422,11 @@ paths:
       responses:
         204:
           description: Delete user from contact list success
-  /messages:
+  /messages/getInitialMessages:
     get:
       tags:
         - Message
-      summary: Get current user messages
+      summary: Get current user initial messages
       parameters:
         - name: showUnreadedOnly
           in: query
@@ -447,22 +447,30 @@ paths:
                     status:
                       type: number
                     data:
-                      type: array
-                      items:
-                        type: object
-                        properties:
+                      type: object
+                      properties:
                           id:
-                            type: string
-                          content:
-                            type: string
-                          is_seen:
-                            type: boolean
-                          sent_at:
-                            type: number
-                          sender_id:
-                            type: string
-                          receiver_id:
-                            type: string
+                            type: object
+                            properties:
+                              unreaded:
+                                type: number
+                              data:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: string
+                                    content:
+                                      type: string
+                                    is_seen:
+                                      type: boolean
+                                    sent_at:
+                                      type: number
+                                    sender_id:
+                                      type: string
+                                    receiver_id:
+                                      type: string
                     message:
                       type: string      
     post:

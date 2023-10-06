@@ -54,4 +54,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Contact::class, 'added_by', 'id');
     }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'receiver_id', 'id');
+    }
 }
