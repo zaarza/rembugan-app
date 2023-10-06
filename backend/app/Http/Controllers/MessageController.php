@@ -112,4 +112,37 @@ class MessageController extends Controller
       'message' => 'Get messages by id success',
     ], 200);
   }
+
+  public function markReaded(Request $request, string $messageId = null): JsonResponse {
+    if (!$messageId) {
+      throw new HttpResponseException(response()->json([
+        'status' => 404,
+        'data' => null,
+        'message' => 'User not found'
+      ]));
+    };
+
+    $message = Message::where([
+      'receiver_id' => $request->user(),
+      'id' => $messageId,
+    ])->first();
+
+    // message not found
+    if (!$message) {
+      throw new HttpResponseException(response()->json([
+        'status' => 404,
+        'data' => null,
+        'message' => 'Message not found'
+      ]));
+    };
+
+    $message->is_readed = true;
+    $message->save();
+
+    return response()->json([
+      'status' => 200,
+      'data' => $message,
+      'message' => 'Mark message readed success',
+    ]);
+  }
 }

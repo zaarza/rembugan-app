@@ -209,4 +209,19 @@ class MessageTest extends TestCase
                 'message' => 'User not found!'
             ]);
     }
+
+    public function testMarkMessageAsReaded() {
+        $user = User::factory()->create();
+        $message = Message::create([
+            'receiver_id' => $user->id,
+            'sender_id' => 'random',
+            'content' => 'hello world'
+        ]);
+
+        Sanctum::actingAs($user);
+        $this->post('/api/messages/' . $message->id . '/markReaded', ['accept' => 'application/json'])
+            ->assertStatus(200);
+
+        $this->assertEquals(Message::where('id', $message->id)->first()->is_readed, 0);
+    }
 }
