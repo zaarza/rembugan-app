@@ -14,7 +14,7 @@ use Tests\TestCase;
 class MessageTest extends TestCase
 {
     use RefreshDatabase;
-    
+
     public function testSendMessage() {
         DB::beginTransaction();
         $user1 = User::factory()->create();
@@ -156,6 +156,16 @@ class MessageTest extends TestCase
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
 
+        Contact::create([
+            'added_by' => $user1->id,
+            'user_id' => $user2->id,
+        ]);
+
+        Contact::create([
+            'added_by' => $user2->id,
+            'user_id' => $user1->id,
+        ]);
+
         Message::create([
             'content' => "Message from $user2->name",
             'receiver_id' => $user1->id,
@@ -184,6 +194,19 @@ class MessageTest extends TestCase
                         ]
                     ],
                 ]
+            ]);
+    }
+
+    public function testGetAllMessagesFailToUserWhoAreNotInContacts() {
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+
+        Sanctum::actingAs($user1);
+        $this->get('/api/messages/'. $user2, ['accept' => 'application/json'])
+            ->assertStatus(404)
+            ->assertJson([
+                'status' => 404,
+                'message' => 'User not found!'
             ]);
     }
 }

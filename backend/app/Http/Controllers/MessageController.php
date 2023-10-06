@@ -83,7 +83,7 @@ class MessageController extends Controller
     }
 
     // if not in contacts
-    if (!Contact::where(['user_id' => $id, 'added_by' => $request->user()->id])) {
+    if (!Contact::where(['user_id' => $id, 'added_by' => $request->user()->id])->first()) {
       throw new HttpResponseException(response()->json([
         'status' => 404,
         'data' => null,
