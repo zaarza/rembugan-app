@@ -13,4 +13,9 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
     }
+
+    public static function tearDownAfterClass(): void
+    {
+        shell_exec('php artisan db:seed');
+    }
 }

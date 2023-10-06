@@ -12,6 +12,8 @@ use Tests\TestCase;
 
 class ContactTest extends TestCase
 {
+    use RefreshDatabase;
+    
     public function testGetContacts() {
         DB::beginTransaction();
         $user = User::factory()->create();

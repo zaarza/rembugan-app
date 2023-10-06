@@ -31,3 +31,4 @@ Route::delete('/contacts/{id}',[App\Http\Controllers\ContactController::class, '
 Route::get('/messages', [App\Http\Controllers\MessageController::class, 'get'])->middleware('auth:sanctum');
 Route::get('/messages/{id}', [App\Http\Controllers\MessageController::class, 'get'])->middleware('auth:sanctum');
 Route::post('/messages', [App\Http\Controllers\MessageController::class, 'post'])->middleware('auth:sanctum');
+Route::post('/messages/{id}/markReaded', [App\Http\Controllers\MessageController::class, 'markReaded'])->middleware('auth:sanctum');

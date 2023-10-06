@@ -13,6 +13,8 @@ use Tests\TestCase;
 
 class MessageTest extends TestCase
 {
+    use RefreshDatabase;
+    
     public function testSendMessage() {
         DB::beginTransaction();
         $user1 = User::factory()->create();
