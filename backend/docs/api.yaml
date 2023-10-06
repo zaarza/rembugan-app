@@ -422,18 +422,11 @@ paths:
       responses:
         204:
           description: Delete user from contact list success
-  /messages/getInitialMessages:
+  /messages:
     get:
       tags:
         - Message
       summary: Get current user initial messages
-      parameters:
-        - name: showUnreadedOnly
-          in: query
-          required: false
-          schema:
-            type: boolean
-            default: false
       responses:
         200:
           description: Get current user messages success
@@ -449,28 +442,53 @@ paths:
                     data:
                       type: object
                       properties:
-                          id:
+                          SOME_SENDER_ID:
                             type: object
                             properties:
                               unreaded:
                                 type: number
-                              data:
-                                type: array
-                                items:
-                                  type: object
-                                  properties:
-                                    id:
-                                      type: string
-                                    content:
-                                      type: string
-                                    is_seen:
-                                      type: boolean
-                                    sent_at:
-                                      type: number
-                                    sender_id:
-                                      type: string
-                                    receiver_id:
-                                      type: string
+                              pagination:
+                                type: object
+                                properties:
+                                  total:
+                                    type: number
+                                  per_page:
+                                    type: number
+                                  current_page:
+                                    type: number
+                                  last_page:
+                                    type: number
+                                  first_page_url:
+                                    type: string
+                                  last_page_url:
+                                    type: string
+                                  next_page_url:
+                                    type: string
+                                  prev_page_url:
+                                    type: string
+                                  path:
+                                    type: string
+                                  from:
+                                    type: number
+                                  to:
+                                    type: number
+                                  data:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        id:
+                                          type: string
+                                        content:
+                                          type: string
+                                        is_seen:
+                                          type: boolean
+                                        sent_at:
+                                          type: number
+                                        sender_id:
+                                          type: string
+                                        receiver_id:
+                                          type: string
                     message:
                       type: string      
     post:
@@ -508,6 +526,75 @@ paths:
                         type: string
                       receiver_id:
                         type: string
+                  message:
+                    type: string
+  /messages/{userId}:
+    get:
+      tags:
+        - Message
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Get messages by id success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: object
+                    properties:
+                      unreaded:
+                        type: number
+                      pagination:
+                        type: object
+                        properties:
+                          total:
+                            type: number
+                          per_page:
+                            type: number
+                          current_page:
+                            type: number
+                          last_page:
+                            type: number
+                          first_page_url:
+                            type: string
+                          last_page_url:
+                            type: string
+                          next_page_url:
+                            type: string
+                          prev_page_url:
+                            type: string
+                          path:
+                            type: string
+                          from:
+                            type: number
+                          to:
+                            type: number
+                          data:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                content:
+                                  type: string
+                                is_seen:
+                                  type: boolean
+                                sent_at:
+                                  type: number
+                                sender_id:
+                                  type: string
+                                receiver_id:
+                                  type: string
                   message:
                     type: string
   /messages/{messageId}/markReaded:

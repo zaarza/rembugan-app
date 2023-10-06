@@ -28,5 +28,6 @@ Route::get('/contacts', [App\Http\Controllers\ContactController::class, 'list'])
 Route::post('/contacts/{id}', [App\Http\Controllers\ContactController::class, 'add'])->middleware('auth:sanctum');
 Route::delete('/contacts/{id}',[App\Http\Controllers\ContactController::class, 'delete'])->middleware('auth:sanctum');
 
-Route::get('/messages/getInitialMessages', [App\Http\Controllers\MessageController::class, 'getInitialMessages'])->middleware('auth:sanctum');
+Route::get('/messages', [App\Http\Controllers\MessageController::class, 'get'])->middleware('auth:sanctum');
+Route::get('/messages/{id}', [App\Http\Controllers\MessageController::class, 'get'])->middleware('auth:sanctum');
 Route::post('/messages', [App\Http\Controllers\MessageController::class, 'post'])->middleware('auth:sanctum');

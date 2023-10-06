@@ -51,28 +51,65 @@ class MessageController extends Controller
  
   
   //  get initial current user message
-  public function getInitialMessages(Request $request): JsonResponse {
+  public function get(Request $request, string $id = null): JsonResponse {
     $result = null;
 
-    // group by id, sort by latest
-    foreach (collect($request->user()->messages)->sortBy('sent_at', 2, true) as $message) {
-      // limit only 1/sender_id
-      if (empty($result[$message->id])) {
-        $result[$message['sender_id']] = [
-          'unreaded' => count(Message::where([
-            'is_readed' => false,
-            'receiver_id' => $request->user()->id,
-            'sender_id' => $message->sender_id,
-          ])->get()),
-          'data' => $message,
-        ];
+    // if id not given in path
+    if (!$id) {
+      // group by sender id, sort by latest
+      foreach (collect($request->user()->messages)->sortBy('sent_at', 2, true) as $message) {
+        // limit only 1/sender_id
+        if (empty($result[$message->id])) {
+          $result[$message['sender_id']] = [
+            'unreaded' => count(Message::where([
+              'is_readed' => false,
+              'receiver_id' => $request->user()->id,
+              'sender_id' => $message->sender_id,
+            ])->get()),
+            'pagination' => Message::orderBy('sent_at', 'desc')
+              ->where([
+                'receiver_id' => $request->user()->id,
+                'sender_id' => $message->sender_id
+              ])->paginate(5)
+          ];
+        }
       }
+
+      return response()->json([
+        'status' => 200,
+        'data' => $result,
+        'message' => 'Get all message success',
+      ], 200);
+    }
+
+    // if not in contacts
+    if (!Contact::where(['user_id' => $id, 'added_by' => $request->user()->id])) {
+      throw new HttpResponseException(response()->json([
+        'status' => 404,
+        'data' => null,
+        'message' => 'User not found!'
+      ], 404));
+    }
+
+    foreach (collect($request->user()->messages) as $message) {
+      $result[$message['sender_id']] = [
+        'unreaded' => count(Message::where([
+          'is_readed' => false,
+          'receiver_id' => $request->user()->id,
+          'sender_id' => $message->sender_id,
+        ])->get()),
+        'pagination' => Message::orderBy('sent_at', 'desc')
+          ->where([
+            'receiver_id' => $request->user()->id,
+            'sender_id' => $message->sender_id
+          ])->paginate(5)
+      ];
     }
 
     return response()->json([
       'status' => 200,
       'data' => $result,
-      'message' => 'Get all message success',
+      'message' => 'Get messages by id success',
     ], 200);
   }
 }
