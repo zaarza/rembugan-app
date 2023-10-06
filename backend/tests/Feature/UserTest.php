@@ -36,6 +36,7 @@ class UserTest extends TestCase
 
     public function testRegisterValidation()
     {
+        DB::beginTransaction();
         $user = User::factory()->create();
 
         $this->post('/api/users', [
@@ -51,8 +52,6 @@ class UserTest extends TestCase
             ],
             'message' => "Register failed, credentials, doesn't meet the requirements"
         ]);
-
-        $user->delete();
     }
 
     public function testGetCsrfCookie()
@@ -62,6 +61,7 @@ class UserTest extends TestCase
 
     public function testLoginUser()
     {
+        DB::beginTransaction();
         $user = User::factory()->create();
         $token = $this->get('/sanctum/csrf-cookie')->getCookie('XSRF-TOKEN')->getValue();
         
@@ -72,12 +72,11 @@ class UserTest extends TestCase
             'accept' => 'application/json',
             'X-XSRF-TOKEN' => $token
         ])->assertStatus(200);
-
-        $user->delete();
     }
 
     public function testGetUserDetailsSuccess()
     {
+        DB::beginTransaction();
         $user = User::factory()->create();
 
         $this->get('/api/users/' . $user->id)->assertStatus(200)->assertJson([
@@ -88,8 +87,6 @@ class UserTest extends TestCase
             ],
             'message' => 'Get user detail success'
         ]);
-
-        $user->delete();
     }
 
     public function testGetUserDetailsNotFound()
@@ -102,23 +99,24 @@ class UserTest extends TestCase
     }
 
     public function testUpdateUserDetails() {
+        DB::beginTransaction();
         Storage::fake();
         
         $user = User::factory()->create();
-        $response = $this->post('/api/users/' . $user->id, [
+        Sanctum::actingAs($user);
+        $this->post('/api/users/' . $user->id, [
             'name' => 'name updated',
             'email' => 'email@updated.com',
-            'avatar' => UploadedFile::fake()->image('fake.png')
-        ]);
-        
-        $response->assertStatus(200);
-        $response->assertJson([
-            'status' => 200,
-            'data' => [
-                'name' => 'name updated',
-                'email' => 'email@updated.com',
-            ]
-        ]);
+            'avatar' => UploadedFile::fake()->image('fake2.png')
+        ])
+            ->assertStatus(200)
+            ->assertJson([
+                'status' => 200,
+                'data' => [
+                    'name' => 'name updated',
+                    'email' => 'email@updated.com',
+                ]
+            ]);
 
         // check user avatar updated
         $user = User::where('id', $user->id)->first();
@@ -132,7 +130,5 @@ class UserTest extends TestCase
             'avatar' => UploadedFile::fake()->image('fake.png')
         ]);
         $this->assertCount(1, Storage::allFiles('public/users/avatar'));
-        
-        $user->delete();
     }
 }
