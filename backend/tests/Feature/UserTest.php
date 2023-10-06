@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -15,6 +16,7 @@ class UserTest extends TestCase
 {
     public function testRegisterSuccess()
     {
+        DB::beginTransaction();
         $newUser = [
             'email' => uniqid().'@email.com',
             'name' => 'random',
@@ -30,8 +32,6 @@ class UserTest extends TestCase
 
         $user = User::where('email', $newUser['email'])->first();
         $this->assertNotNull($user);
-
-        $user->delete();
     }
 
     public function testRegisterValidation()

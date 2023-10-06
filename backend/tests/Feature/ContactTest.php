@@ -13,6 +13,7 @@ use Tests\TestCase;
 class ContactTest extends TestCase
 {
     public function testGetContacts() {
+        DB::beginTransaction();
         $user = User::factory()->create();
 
         $this->assertEmpty($user->contacts);
@@ -28,8 +29,6 @@ class ContactTest extends TestCase
         ])->assertStatus(200);
 
         $this->assertNotEmpty(User::where('id', $user->id)->first()->contacts);
-        $user->delete();
-        $contactItem->delete();
     }
 
     public function testGetContactsFailsIfNotAuthenticated() {
