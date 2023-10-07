@@ -616,6 +616,15 @@ paths:
       tags:
         - Inbox
       summary: Get current user inbox
+      parameters:
+        - name: show
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - seen
+              - unseen
       responses:
         200:
           description: Get current user inbox success
@@ -654,7 +663,7 @@ paths:
       responses:
         201:
           description: Post new inbox success
-  /inbox/{inboxId}/markReaded:
+  /inbox/{inboxId}/markSeen:
     put:
       tags:
         - Inbox
@@ -668,28 +677,6 @@ paths:
       responses:
         204:
           description: Update inbox readed status success
-  /inbox/{inboxId}/response:
-    put:
-      tags:
-        - Inbox
-      summary: Update inbox response status
-      parameters:
-        - name: inboxId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        204:
-          description: Update inbox response status success
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                is_responded:
-                  type: boolean
   /groups:
     get:
       tags:
