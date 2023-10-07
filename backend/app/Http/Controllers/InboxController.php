@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\InboxPostRequest;
 use App\Models\Inbox;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -45,5 +46,28 @@ class InboxController extends Controller
             'data' => $inbox,
             'message' => 'Post inbox success'
         ], 201);
+    }
+
+    public function markSeen(Request $request, string $inboxId): JsonResponse {
+        // if inbox id invalid or inbox doesn't exist in current user inbox
+        if (!$inbox = Inbox::where([
+            'id' => $inboxId,
+            'receiver_id' => $request->user()->id,
+        ])->first()) {
+            throw new HttpResponseException(response()->json([
+                'status' => 404,
+                'data' => null,
+                'message' => 'Inbox not found'
+            ], 404));
+        };
+
+        $inbox->is_seen = true;
+        $inbox->save();
+
+        return response()->json([
+            'status' => 200,
+            'data' => $inbox,
+            'message' => 'Mark inbox seen success'
+        ], 200);
     }
 }

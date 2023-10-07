@@ -144,4 +144,51 @@ class InboxTest extends TestCase
                 ]
             ]);
     }
+
+    public function testMarkInboxSeen() {
+        $user = User::factory()->create();
+
+        $inbox = Inbox::create([
+            'content' => 'randomContent',
+            'receiver_id' => $user->id,
+            'sender_id' => 'randomId'
+        ]);
+
+        $this->assertEquals(Inbox::where('id', $inbox->id)->first()->is_seen, 0);
+
+        Sanctum::actingAs($user);
+        $this->post('/api/inbox/' . $inbox->id . '/markSeen', [], ['accept' => 'application/json'])
+            ->assertStatus(200);
+
+        $this->assertEquals(Inbox::where('id', $inbox->id)->first()->is_seen, 1);
+    }
+
+    public function testMarkInboxFailIfInboxIdInvalid() {
+        $user = User::factory()->create();
+
+        Inbox::create([
+            'content' => 'randomContent',
+            'receiver_id' => $user->id,
+            'sender_id' => 'randomId'
+        ]);
+
+        Sanctum::actingAs($user);
+        $this->post('/api/inbox/randoInboxId/markSeen', [], ['accept' => 'application/json'])
+            ->assertStatus(404);
+    }
+
+
+    public function testMarkInboxFailIfInboxNotExistInUserInbox() {
+        $users = User::factory(3)->create();
+
+        $inbox = Inbox::create([
+            'content' => 'randomContent',
+            'receiver_id' => $users[2]->id,
+            'sender_id' => 'randomId'
+        ]);
+
+        Sanctum::actingAs($users[0]);
+        $this->post('/api/inbox/'. $inbox->id  .'/markSeen', [], ['accept' => 'application/json'])
+            ->assertStatus(404);
+    }
 }

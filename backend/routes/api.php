@@ -35,3 +35,4 @@ Route::post('/messages/{messageId}/markReaded', [App\Http\Controllers\MessageCon
 
 Route::get('/inbox', [App\Http\Controllers\InboxController::class, 'get'])->middleware('auth:sanctum');
 Route::post('/inbox', [App\Http\Controllers\InboxController::class, 'post'])->middleware('auth:sanctum');
+Route::post('/inbox/{inboxId}/markSeen', [App\Http\Controllers\InboxController::class, 'markSeen'])->middleware('auth:sanctum');
