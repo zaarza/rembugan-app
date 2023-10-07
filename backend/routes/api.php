@@ -32,3 +32,5 @@ Route::get('/messages', [App\Http\Controllers\MessageController::class, 'get'])-
 Route::get('/messages/{id}', [App\Http\Controllers\MessageController::class, 'get'])->middleware('auth:sanctum');
 Route::post('/messages', [App\Http\Controllers\MessageController::class, 'post'])->middleware('auth:sanctum');
 Route::post('/messages/{messageId}/markReaded', [App\Http\Controllers\MessageController::class, 'markReaded'])->middleware('auth:sanctum');
+
+Route::get('/inbox', [App\Http\Controllers\InboxController::class, 'get']);
