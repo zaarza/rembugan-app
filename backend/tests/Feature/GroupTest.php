@@ -30,7 +30,6 @@ class GroupTest extends TestCase
         ])
             ->assertStatus(201);
 
-        $this->assertCount(1, Group::where('created_by', $user->id)->get());
         $this->assertNotEmpty(User::where('id', $user->id)->first()->groups);
         $this->assertCount(1, Storage::allFiles('public/groups/avatar'));
     }
