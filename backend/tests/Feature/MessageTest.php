@@ -222,6 +222,14 @@ class MessageTest extends TestCase
         $this->post('/api/messages/' . $message->id . '/markReaded', ['accept' => 'application/json'])
             ->assertStatus(200);
 
-        $this->assertEquals(Message::where('id', $message->id)->first()->is_readed, 0);
+        $this->assertEquals(Message::where('id', $message->id)->first()->is_readed, 1);
+    }
+
+    public function testMarkMessageAsReadedFailIfMessageIdInvalid() {
+        $user = User::factory()->create();
+
+        Sanctum::actingAs($user);
+        $this->post('/api/messages/randomId/markReaded', ['accept' => 'application/json'])
+            ->assertStatus(404);
     }
 }

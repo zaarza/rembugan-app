@@ -123,7 +123,7 @@ class MessageController extends Controller
     };
 
     $message = Message::where([
-      'receiver_id' => $request->user(),
+      'receiver_id' => $request->user()->id,
       'id' => $messageId,
     ])->first();
 
@@ -133,7 +133,7 @@ class MessageController extends Controller
         'status' => 404,
         'data' => null,
         'message' => 'Message not found'
-      ]));
+      ], 404));
     };
 
     $message->is_readed = true;
