@@ -22,6 +22,7 @@ class GroupTest extends TestCase
         Storage::fake();
         
         Sanctum::actingAs($user);
+
         $response = $this->post('/api/groups', [
             'name' => 'Random Group Name',
             'description' => 'Lorem ipsum dolor sit amet',
@@ -46,6 +47,7 @@ class GroupTest extends TestCase
             'is_admin' => 1
         ])->first());
 
+        $this->assertNotEmpty(User::where('id', $user->id)->first()->groups);
         $this->assertCount(1, Storage::allFiles('public/groups/avatar'));
     }
 
