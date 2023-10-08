@@ -5,6 +5,8 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\Contact;
+use App\Models\Group;
+use App\Models\GroupMember;
 use App\Models\Inbox;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -49,6 +51,28 @@ class DatabaseSeeder extends Seeder
             'sender_id' => $user3->id,
             'type' => 'friend',
             'content' => $user3->id,
+        ]);
+
+        $group1 = Group::create([
+            'name' => 'Group Example',
+            'description' => 'Lorem ipsum dolor sit amet',
+            'created_by' => $user1->id,
+        ]);
+
+        $group2 = Group::create([
+            'name' => 'Group Example 2',
+            'description' => 'Lorem ipsum dolor sit amet',
+            'created_by' => $user1->id,
+        ]);
+
+        GroupMember::create([
+            'user_id' => $user1->id,
+            'group_id' => $group1->id,
+        ]);
+
+        GroupMember::create([
+            'user_id' => $user1->id,
+            'group_id' => $group2->id,
         ]);
     }
 }
