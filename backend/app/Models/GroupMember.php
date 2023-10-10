@@ -21,6 +21,15 @@ class GroupMember extends Model
         'is_admin'
     ];
 
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'is_admin' => false,
+    ];
+
     public function group(): BelongsTo 
     {
         return $this->belongsTo(Group::class, 'id', 'group_id');

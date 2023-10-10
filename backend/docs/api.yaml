@@ -767,7 +767,7 @@ paths:
     delete:
       tags:
         - Groups
-      summary: Remove group by group id
+      summary: Leave group
       parameters:
         - name: groupId
           in: path
@@ -776,7 +776,7 @@ paths:
             type: string
       responses:
         204:
-          description: Remove group success
+          description: Leave group success
     put:
       tags:
         - Groups
