@@ -224,4 +224,95 @@ class GroupTest extends TestCase
 
         $response->assertStatus(404);
     }
+
+    public function test_update_group_details_with_valid_group_id() {
+        Storage::fake();
+        $user = User::factory()->create();
+        $group = Group::factory()->create([ 'created_by' => $user->id ]);
+        $groupMember = GroupMember::create([
+            'group_id' => $group->id,
+            'user_id' => $user->id,
+            'is_admin' => true
+        ]);
+
+        Sanctum::actingAs($user);
+        $response1 = $this->post('/api/groups/' . $group->id, 
+            [
+                'name' => 'updated',
+                'description' => 'updated',
+                'avatar' => UploadedFile::fake()->image('fake.png'),
+            ],
+            ['accept' => 'application/json']
+        );
+
+        $response1->assertStatus(200);
+        $response1->assertJson([
+            'data' => [
+                'name' => 'updated',
+                'description' => 'updated',
+            ]
+        ]);
+
+        // Avatar updated
+        $this->assertNotNull($group->refresh()->avatar);
+        // Avatar stored into disk
+        $this->assertNotEmpty(Storage::allFiles('/public/groups/avatar'));
+
+        $response2 = $this->post('/api/groups/' . $group->id,
+            [
+                'name' => 'updated 2',
+                'description' => 'updated 2',
+                'avatar' => UploadedFile::fake()->image('fake2.png'),
+            ],
+            ['accept' => 'application/json']
+        );
+
+        $response2->assertStatus(200);
+        $response2->assertJson([
+            'data' => [
+                'name' => 'updated 2',
+                'description' => 'updated 2'
+            ]
+        ]);
+
+        // Avatar updated
+        $this->assertNotSame($response1->decodeResponseJson()['data']['avatar'], $response2->decodeResponseJson()['data']['avatar']);
+
+        // Old avatar file deleted
+        $this->assertCount(1, Storage::allFiles('/public/groups/avatar'));
+    }
+
+    public function test_update_group_details_with_non_admin_user() {
+        $users = User::factory(2)->create();
+        $group = Group::factory()->create([ 'created_by' => $users[0]->id ]);
+        GroupMember::create([
+            'group_id' => $group->id,
+            'user_id' => $users[0]->id,
+            'is_admin' => true
+        ]);
+
+        Sanctum::actingAs($users[1]);
+        $response = $this->post('/api/groups/' . $group->id,
+            [
+                'name' => 'updated'
+            ],
+            ['accept' => 'application/json']
+        );
+
+        $response->assertStatus(404);
+    }
+
+    public function test_update_group_details_with_invalid_group_id() {
+        $user = User::factory()->create();
+
+        Sanctum::actingAs($user);
+        $response = $this->post('/api/groups/' . uniqid(),
+            [
+                'name' => 'updated'
+            ],
+            ['accept' => 'application/json']
+        );
+
+        $response->assertStatus(404);
+    }
 }

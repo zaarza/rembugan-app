@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GroupNewRequest;
+use App\Http\Requests\GroupUpdateRequest;
 use App\Http\Requests\StoreGroupRequest;
 use App\Http\Requests\UpdateGroupRequest;
 use App\Models\Group;
@@ -138,5 +139,56 @@ class GroupController extends Controller
         'message' => $exception->getMessage(),
       ], 500);
     }
+  }
+
+  /**
+  * Update group details
+  */
+  public function update(GroupUpdateRequest $request, string $groupId = null): JsonResponse {
+    $data = $request->validated();
+
+    // TODO: Check is group id given & valid, user is an admin in related group
+    $group = Group::findOr($groupId, function () {
+      return false;
+    });
+    $isAdmin = GroupMember::where([
+      'user_id' => $request->user()->id,
+      'group_id' => $groupId,
+      'is_admin' => true,
+    ])->firstOr(function () {
+      return false;
+    });
+
+    if (!$groupId || !$group || !$isAdmin) {
+      throw new HttpResponseException(response()->json([
+        'status' => 404,
+        'data' => null,
+        'message' => 'Group not found!'
+      ], 404));
+    }
+
+    // TODO: Update group details
+    // Update avatar if uploaded
+    if ($avatar = $request->file('avatar')) {
+      $path = $avatar->storeAs('public/groups/avatar', uniqid() . '.' . $avatar->extension());
+      $link = Storage::url($path);
+
+      // Delete old avatar file if exist
+      if ($oldAvatar = $group->avatar) {
+          Storage::has($path) && Storage::delete($path);
+      }
+      
+      $data['avatar'] = $link;
+      $group->avatar = $request->avatar;
+    }
+
+    $group->fill($data);
+    $group->save();
+
+    return response()->json([
+      'status' => 200,
+      'data' => $group,
+      'message' => 'Update group details success'
+    ], 200);
   }
 }

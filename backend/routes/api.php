@@ -41,3 +41,4 @@ Route::post('/groups', [App\Http\Controllers\GroupController::class, 'new'])->mi
 Route::get('/groups', [App\Http\Controllers\GroupController::class, 'get'])->middleware('auth:sanctum');
 Route::get('/groups/{groupId}', [App\Http\Controllers\GroupController::class, 'get'])->middleware('auth:sanctum');
 Route::delete('/groups/{groupId}/leave', [App\Http\Controllers\GroupController::class, 'leave'])->middleware('auth:sanctum');
+Route::post('/groups/{groupId}', [App\Http\Controllers\GroupController::class, 'update'])->middleware('auth:sanctum');
