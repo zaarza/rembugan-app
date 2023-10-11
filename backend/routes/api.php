@@ -42,3 +42,6 @@ Route::get('/groups', [App\Http\Controllers\GroupController::class, 'get'])->mid
 Route::get('/groups/{groupId}', [App\Http\Controllers\GroupController::class, 'get'])->middleware('auth:sanctum');
 Route::delete('/groups/{groupId}/leave', [App\Http\Controllers\GroupController::class, 'leave'])->middleware('auth:sanctum');
 Route::post('/groups/{groupId}', [App\Http\Controllers\GroupController::class, 'update'])->middleware('auth:sanctum');
+
+Route::get('/groupMessages', [App\Http\Controllers\GroupMessageController::class, 'get'])->middleware('auth:sanctum');
+Route::get('/groupMessages/{groupId}', [App\Http\Controllers\GroupMessageController::class, 'get'])->middleware('auth:sanctum');

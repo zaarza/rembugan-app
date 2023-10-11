@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Group;
 use App\Models\GroupMember;
+use App\Models\GroupMessage;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -312,6 +313,79 @@ class GroupTest extends TestCase
             ],
             ['accept' => 'application/json']
         );
+
+        $response->assertStatus(404);
+    }
+
+    public function test_get_group_message() {
+        $user = User::factory()->create();
+        $groups = Group::factory(2)->create([
+            'created_by' => $user->id
+        ]);
+        $group1Member = GroupMember::create([
+            'group_id' => $groups[0]->id,
+            'user_id' => $user->id,
+            'is_admin' => true
+        ]);
+        $group2Member = GroupMember::create([
+            'group_id' => $groups[1]->id,
+            'user_id' => $user->id,
+            'is_admin' => true
+        ]);
+        $group1Messages = GroupMessage::factory(10)->create([
+            'group_id' => $groups[0]->id,
+            'sender_id' => $user->id
+        ]);
+        $group2Messages = GroupMessage::factory(2)->create([
+            'group_id' => $groups[1]->id,
+            'sender_id' => $user->id
+        ]);
+        
+        // TODO: Get group messages without sending group id
+        Sanctum::actingAs($user);
+        $response1 = $this->get('/api/groupMessages/', [
+            'accept' => 'application/json'
+        ]);
+
+        $response1->assertStatus(200);;
+        $this->assertEquals(10, $response1->decodeResponseJson()['data'][$groups[0]->id]['total']);
+        $this->assertEquals(2, $response1->decodeResponseJson()['data'][$groups[1]->id]['total']);
+
+        // TODO: Get group messages with sending group id
+        $response2 = $this->get('/api/groupMessages/' . $groups[0]->id, [
+            'accept' => 'application/json'
+        ]);
+
+        $response2->assertStatus(200);
+        $this->assertEquals(10, count($response2->decodeResponseJson()['data']));
+    }
+
+    public function test_get_group_message_with_invalid_group_id() {
+        $user = User::factory()->create();
+
+        Sanctum::actingAs($user);
+        $response = $this->get('/api/groups/' . uniqid(), [
+            'accept' => 'application/json'
+        ]);
+
+        $response->assertStatus(404);
+    }
+
+    public function test_get_group_message_with_user_not_joined_that_group() {
+        $users = User::factory(2)->create();
+        $group = Group::factory()->create([
+            'created_by' => $users[0]->id
+        ]);
+
+        GroupMember::create([
+            'group_id' => $group->id,
+            'user_id' => $users[1]->id
+        ]);
+
+        Sanctum::actingAs($users[0]);
+        $response = $this->get('/api/groups/' . uniqid(), [
+            'accept' => 'application/json'
+        ]);
 
         $response->assertStatus(404);
     }

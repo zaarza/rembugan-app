@@ -8,30 +8,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Group extends Model
+class GroupMessage extends Model
 {
     use HasFactory, HasUlids;
     protected $dateFormat = 'U';
     protected $fillable = [
-        'name',
-        'description',
-        'avatar',
-        'created_by',
+        'content',
+        'sender_id',
+        'group_id',
     ];
     const UPDATED_AT = null;
+    const CREATED_AT = 'sent_at';
 
-    public function members(): HasMany
+    public function group(): BelongsTo
     {
-        return $this->hasMany(GroupMember::class, 'group_id', 'id');
+        return $this->belongsTo(Group::class, 'id', 'group_id');
     }
 
-    public function admin(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'id', 'created_by');
-    }
-
-    public function messages(): HasMany
-    {
-        return $this->hasMany(GroupMessage::class, 'group_id', 'id');
+        return $this->belongsTo(User::class, 'id', 'sender_id');
     }
 }
