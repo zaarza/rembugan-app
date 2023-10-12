@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Group;
 use App\Models\GroupMember;
 use App\Models\GroupMessage;
+use App\Models\Inbox;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -389,4 +390,89 @@ class GroupTest extends TestCase
 
         $response->assertStatus(404);
     }
+    
+    public function test_accept_group_join_request() {
+        // TODO: Seeding
+        $users = User::factory(2)->create();
+        $group = Group::factory()->create([
+            'created_by' => $users[0]
+        ]);
+
+        GroupMember::create([
+            'group_id' => $group->id,
+            'user_id' => $users[0]->id,
+            'is_admin' => true
+        ]);
+
+        $joinRequest = Inbox::create([
+            'type' => 'group-join-request',
+            'receiver_id' => $group->id,
+            'content' => $group->id,
+            'sender_id' => $users[1]->id
+        ]);
+
+        // TODO: Get response
+        Sanctum::actingAs($users[0]);
+        $response = $this->post('/api/groups/' . $group->id . '/accept', 
+            [
+                'inbox_id' => $joinRequest->id,
+                'sender_id' => $users[1]->id
+            ],
+            ['accept' => 'application/json']
+        );
+
+        // TODO: Asserting
+        $response->assertStatus(201);
+
+        // User added to group
+        $this->assertDatabaseHas('group_members', [
+            'user_id' => $users[1]->id,
+            'group_id' => $group->id,
+        ]);
+        // Inbox request deleted
+        $this->assertDatabaseMissing('inbox', $joinRequest->toArray());
+    }
+
+    public function test_reject_group_join_request() {
+        // TODO: Seeding
+        $users = User::factory(2)->create();
+        $group = Group::factory()->create([
+            'created_by' => $users[0]
+        ]);
+
+        GroupMember::create([
+            'group_id' => $group->id,
+            'user_id' => $users[0]->id,
+            'is_admin' => true
+        ]);
+
+        $joinRequest = Inbox::create([
+            'type' => 'group-join-request',
+            'receiver_id' => $group->id,
+            'content' => $group->id,
+            'sender_id' => $users[1]->id
+        ]);
+
+        // TODO: Get response
+        Sanctum::actingAs($users[0]);
+        $response = $this->post('/api/groups/' . $group->id . '/reject', 
+            [
+                'inbox_id' => $joinRequest->id,
+                'sender_id' => $users[1]->id
+            ],
+            ['accept' => 'application/json']
+        );
+
+        // TODO: Asserting
+        $response->assertStatus(200);
+
+        // User not added to group
+        $this->assertDatabaseMissing('group_members', [
+            'user_id' => $users[1]->id,
+            'group_id' => $group->id,
+        ]);
+        // Inbox request deleted
+        $this->assertDatabaseMissing('inbox', $joinRequest->toArray());
+    }
+
 }

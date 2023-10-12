@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\InboxPostRequest;
+use App\Models\Group;
 use App\Models\Inbox;
+use App\Models\User;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
@@ -28,18 +30,31 @@ class InboxController extends Controller
         ], 200);
     }
 
+
+    /**
+     * Create new inbox notification
+     */
     public function post(InboxPostRequest $request): JsonResponse {
         $data = $request->validated();
 
-        
-        $temp = [
+        // TODO: Check whether the receiver ID matches the data in the user or group model
+        $isReceiverIdValidInUserModel = User::findOr($data['receiver_id'], fn () => false);
+        $isReceiverIdValidInGroupModel = Group::findOr($data['receiver_id'], fn () => false);
+
+        if (!$isReceiverIdValidInUserModel && !$isReceiverIdValidInGroupModel) {
+            throw new HttpResponseException(response()->json([
+                'status' => 404,
+                'data' => null,
+                'message' => 'Receiver id not found!'
+            ], 404));
+        };
+
+        $inboxToStore = [
             ...$data,
             'sender_id' => $request->user()->id,
         ];
         
-        $inbox = Inbox::create($temp);
-
-        // TODO: Group join request
+        $inbox = Inbox::create($inboxToStore);
 
         return response()->json([
             'status' => 201,

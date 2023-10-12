@@ -824,6 +824,56 @@ paths:
                           type: string
                         sent_at:
                           type: number
+  /groups/{groupId}/accept:
+    post:
+      tags:
+        - Groups
+      summary: Accept group join request
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type:
+              string
+      responses:
+        200:
+          description: Accept group join request success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      group_id:
+                        type: string
+                      user_id:
+                        type: string
+                      is_admin:
+                        type: boolean
+                      joined_at:
+                        type: integer
+                  message:
+                    type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                inbox_id:
+                  type: string
+                sender_id:
+                  type: string
+
+        
+    
 
 
 

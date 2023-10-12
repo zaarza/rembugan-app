@@ -5,9 +5,8 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Validation\Rule;
 
-class InboxPostRequest extends FormRequest
+class GroupAcceptJoinRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,9 +24,8 @@ class InboxPostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => Rule::in(['friend', 'group', 'group-join-request']),
-            'receiver_id' => 'required',
-            'content' => 'required'
+            'inbox_id' => 'required',
+            'sender_id' => 'required'
         ];
     }
 
@@ -36,7 +34,7 @@ class InboxPostRequest extends FormRequest
         throw new HttpResponseException(response()->json([
             'status' => 403,
             'data' => $validator->getMessageBag(),
-            'message' => "Post inbox failed, credentials doesn't meet the requirements",
+            'message' => "Accept join group request failed, credentials doesn't meet the requirements"
         ], 403));
     }
 }

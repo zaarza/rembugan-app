@@ -91,14 +91,15 @@ class InboxTest extends TestCase
         $users = User::factory(2)->create();
         
         Sanctum::actingAs($users[1]);
-        $this->post('/api/inbox', [
+        $response = $this->post('/api/inbox', [
             'type' => 'friend',
             'receiver_id' => $users[0]->id,
             'content' => $users[1]->id,
         ], [
             'accept' => 'application/json'
-        ])
-            ->assertStatus(201);
+        ]);
+        
+        $response->assertStatus(201);
 
         $this->assertDatabaseHas('inbox', [
             'type' => 'friend',
@@ -111,19 +112,15 @@ class InboxTest extends TestCase
         $user = User::factory()->create();
 
         Sanctum::actingAs($user);
-        $this->post('/api/inbox', [
+        $response = $this->post('/api/inbox', [
             'type' => 'friend',
-            'receiver_id' => 'randomId',
+            'receiver_id' => uniqid(),
             'content' => $user->id,
         ], [
             'accept' => 'application/json'
-        ])
-            ->assertStatus(403)
-            ->assertJson([
-                'data' => [
-                    'receiver_id' => ['The selected receiver id is invalid.']
-                ]
         ]);
+
+        $response->assertStatus(404);
     }
 
     public function testPostInboxFailIfInboxTypeIsInvalid() {

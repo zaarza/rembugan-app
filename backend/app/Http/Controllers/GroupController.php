@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GroupAcceptJoinRequest;
 use App\Http\Requests\GroupNewRequest;
 use App\Http\Requests\GroupUpdateRequest;
 use App\Http\Requests\StoreGroupRequest;
 use App\Http\Requests\UpdateGroupRequest;
 use App\Models\Group;
 use App\Models\GroupMember;
+use App\Models\Inbox;
 use Exception;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
@@ -190,5 +192,124 @@ class GroupController extends Controller
       'data' => $group,
       'message' => 'Update group details success'
     ], 200);
+  }
+
+  /**
+   * Accept join request received from inbox with type 'group-join-request'
+   */
+  public function accept(GroupAcceptJoinRequest $request, string $groupId = null): JsonResponse {
+    $data = $request->validated();
+
+    // TODO: Check group id & inbox id is valid
+    $group = Group::findOr($groupId, fn() => false);
+    $inbox = Inbox::where([
+      'id' => $data['inbox_id'],
+      'type' => 'group-join-request',
+      'sender_id' => $data['sender_id'],
+      'receiver_id' => $groupId
+    ])->firstOr(fn() => false);
+
+    if (!$groupId || !$group || !$inbox) {
+      throw new HttpResponseException(response()->json([
+        'status' => 404,
+        'data' => null,
+        'message' => 'Group not found'
+      ], 404));
+    };
+
+    // TODO: Check is current user is admin in related group
+    $isAdmin = GroupMember::where([
+      'group_id' => $groupId,
+      'user_id' => $request->user()->id,
+      'is_admin' => true
+    ])->firstOr(fn() => false);
+
+    if (!$isAdmin) {
+      throw new HttpResponseException(response()->json([
+        'status' => 401,
+        'data' => null,
+        'message' => 'Unauthorized'
+      ], 401));
+    }
+
+    // TODO: Add user to group member model
+    try {
+      $addedUserToGroupMember = GroupMember::create([
+        'group_id' => $groupId,
+        'user_id' => $data['sender_id']
+      ]);
+
+      // Delete inbox after adding to group member
+      $inbox->delete();
+      
+      return response()->json([
+        'status' => 201,
+        'data' => $addedUserToGroupMember,
+        'message' => 'Accept group join request success'
+      ], 201);
+    } catch (Exception $exception) {
+      throw new HttpResponseException(request()->json([
+        'status' => 500,
+        'data' => null,
+        'message' => $exception->getMessage(),
+      ], 500));
+    }
+  }
+
+  /**
+   * Reject join request received from inbox with type 'group-join-request'
+   */
+  public function reject(GroupAcceptJoinRequest $request, string $groupId = null): JsonResponse {
+    $data = $request->validated();
+
+    // TODO: Check group id & inbox id is valid
+    $group = Group::findOr($groupId, fn() => false);
+    $inbox = Inbox::where([
+      'id' => $data['inbox_id'],
+      'type' => 'group-join-request',
+      'sender_id' => $data['sender_id'],
+      'receiver_id' => $groupId
+    ])->firstOr(fn() => false);
+
+    if (!$groupId || !$group || !$inbox) {
+      throw new HttpResponseException(response()->json([
+        'status' => 404,
+        'data' => null,
+        'message' => 'Group not found'
+      ], 404));
+    };
+
+    // TODO: Check is current user is admin in related group
+    $isAdmin = GroupMember::where([
+      'group_id' => $groupId,
+      'user_id' => $request->user()->id,
+      'is_admin' => true
+    ])->firstOr(fn() => false);
+
+    if (!$isAdmin) {
+      throw new HttpResponseException(response()->json([
+        'status' => 401,
+        'data' => null,
+        'message' => 'Unauthorized'
+      ], 401));
+    }
+
+    // TODO: Add user to group member model
+    try {
+      // Delete inbox after adding to group member
+      $inbox->delete();
+      
+      return response()->json([
+        'status' => 200,
+        'data' => null,
+        'message' => 'Reject group join request success'
+      ], 200);
+    } catch (Exception $exception) {
+      throw new HttpResponseException(request()->json([
+        'status' => 500,
+        'data' => null,
+        'message' => $exception->getMessage(),
+      ], 500));
+    }
   }
 }
