@@ -27,6 +27,8 @@ Route::post('/users/{id}', [\App\Http\Controllers\UserController::class, 'update
 Route::get('/contacts', [App\Http\Controllers\ContactController::class, 'list'])->middleware('auth:sanctum');
 Route::post('/contacts/{id}', [App\Http\Controllers\ContactController::class, 'add'])->middleware('auth:sanctum');
 Route::delete('/contacts/{id}',[App\Http\Controllers\ContactController::class, 'delete'])->middleware('auth:sanctum');
+Route::post('/contacts/{senderId}/accept',[App\Http\Controllers\ContactController::class, 'accept'])->middleware('auth:sanctum');
+Route::post('/contacts/{senderId}/reject',[App\Http\Controllers\ContactController::class, 'reject'])->middleware('auth:sanctum');
 
 Route::get('/messages', [App\Http\Controllers\MessageController::class, 'get'])->middleware('auth:sanctum');
 Route::get('/messages/{id}', [App\Http\Controllers\MessageController::class, 'get'])->middleware('auth:sanctum');

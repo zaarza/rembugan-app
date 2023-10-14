@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inbox', function (Blueprint $table) {
+        Schema::create('inboxes', function (Blueprint $table) {
             $table->ulid('id');
             $table->enum('type', ['friend', 'group', 'group-join-request']);
             $table->string('sender_id');
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inbox');
+        Schema::dropIfExists('inboxes');
     }
 };

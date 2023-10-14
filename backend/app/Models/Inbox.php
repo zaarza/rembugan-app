@@ -12,7 +12,6 @@ class Inbox extends Model
     use HasFactory, HasUlids;
     protected $fillable = ['type', 'is_seen', 'receiver_id', 'sender_id', 'content'];
     protected $dateFormat = 'U';
-    protected $table = 'inbox';
 
     public function sender_details(): BelongsTo
     {

@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
 use App\Models\Contact;
+use App\Models\Inbox;
 use App\Models\User;
 use ErrorException;
+use Exception;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -105,6 +108,60 @@ class ContactController extends Controller
                 'status' => 500,
                 'data' => null,
                 'message' => $error->getMessage(),
+            ], 500));
+        }
+    }
+
+    /**
+     * Accept friend request from inbox with type 'friend'
+     */
+    public function accept(Request $request, string $senderId = null): JsonResponse {
+        // TODO: Check is inbox id valid
+        $inbox = Inbox::where([
+            'receiver_id' => $request->user()->id,
+            'sender_id' => $senderId,
+            'type' => 'friend'
+        ])->first();
+
+        // Not valid / not found
+        if (!$senderId || $inbox == null) {
+            throw new HttpResponseException(response()->json([
+                'status' => 404,
+                'data' => null,
+                'message' => 'Inbox not found'
+            ], 404));
+        }
+
+        // Valid
+        DB::beginTransaction();
+        try {
+            // TODO: Add to contacts
+            $contact = Contact::firstOrCreate([
+                'added_by' => $request->user()->id,
+                'user_id' => $senderId
+            ]);
+            Contact::firstOrCreate([
+                'user_id' => $request->user()->id,
+                'added_by' => $senderId
+            ]);
+            
+            // TODO: Delete inbox
+            $inbox->delete();
+
+            // TODO: Send success response
+            DB::commit();
+            return response()->json([
+                'status' => 201,
+                'data' => $contact,
+                'message' => 'Accept friend request success'
+            ], 201);
+        } catch (Exception $exception) {
+            // TODO: Send failed response
+            DB::rollBack();
+            throw new HttpResponseException(response()->json([
+                'status' => 500,
+                'data' => null,
+                'message' => $exception->getMessage()
             ], 500));
         }
     }

@@ -422,6 +422,34 @@ paths:
       responses:
         204:
           description: Delete user from contact list success
+  /contacts/senderId/accept:
+    post:
+      tags:
+        - Contacts
+      summary: Accept friend request
+      parameters:
+        - name: senderId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Accept friend request success
+  /contacts/senderId/reject:
+    post:
+      tags:
+        - Contacts
+      summary: Reject friend request
+      parameters:
+        - name: senderId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Reject friend request success
   /messages:
     get:
       tags:

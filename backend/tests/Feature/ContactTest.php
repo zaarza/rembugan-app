@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Contact;
+use App\Models\Inbox;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -125,5 +126,67 @@ class ContactTest extends TestCase
             ->assertJson([
                 'message' => 'User is not exist in contacts',
             ]);
+    }
+
+    public function test_accept_friend_request_with_valid_id() {
+        // TODO: Seeding
+        $users = User::factory(2)->create();
+        $friendRequest = Inbox::create([
+            'sender_id' => $users[1]->id,
+            'receiver_id' => $users[0]->id,
+            'content' => $users[1]->id,
+            'type' => 'friend'
+        ]);
+
+        // TODO: Getting response
+        Sanctum::actingAs($users[0]);
+        $response = $this->post('/api/contacts/' . $users[1]->id . '/accept',
+            [],
+            ['accept' => 'application/json']
+        );
+
+        // TODO: Asserting
+        $response->assertStatus(201);
+
+        // Added to users[0] & users[1] contact
+        $this->assertDatabaseHas('contacts',
+            [
+                'user_id' => $users[1]->id,
+                'added_by' => $users[0]->id
+            ]
+        );
+
+        $this->assertDatabaseHas('contacts',
+            [
+                'added_by' => $users[1]->id,
+                'user_id' => $users[0]->id
+            ]
+        );
+
+        // Inbox deleted from database
+        $this->assertDatabaseMissing('inboxes',
+            [
+                'id' => $friendRequest->id,
+                'sender_id' => $users[1]->id,
+                'receiver_id' => $users[0]->id,
+                'content' => $users[0]->id,
+                'type' => 'friend'
+            ]
+        );
+    }
+
+    public function test_accept_friend_request_with_invalid_id() {
+        // TODO: Seeding
+        $user = User::factory()->create();
+
+        // TODO: Getting response
+        Sanctum::actingAs($user);
+        $response = $this->post('/api/contacts/' . uniqid() . '/accept',
+            [],
+            ['accept' => 'application/json']
+        );
+
+        // TODO: Asserting
+        $response->assertStatus(404);
     }
 }
