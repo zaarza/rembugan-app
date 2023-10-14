@@ -11,7 +11,7 @@ type FormInitialValues = {
 
 const useRegisterForm = () => {
     const router = useRouter();
-    const form = useFormik({
+    const form:any = useFormik({
         initialValues: {
             name: '',
             email: '',
@@ -25,13 +25,16 @@ const useRegisterForm = () => {
         onSubmit: (values) => submit(values),
     });
 
-    const submit = async (values: FormInitialValues) => {
+    const submit:any = async (values: FormInitialValues) => {
         try {
             await getCsrfCookie();
             await userRegister(values);
             router.push('/login');
         } catch (error: any) {
-            form.setErrors(error.response.data.data);
+            // TODO: Set Formik error if status code is 403/ invalid credentials
+            if (error.response?.status === 403) {
+                form.setErrors(error.response.data.data);
+            }
         }
     };
 

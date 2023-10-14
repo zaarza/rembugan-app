@@ -1,7 +1,8 @@
 import { useFormik } from 'formik'
 import * as Yup from "yup";
-import { getCsrfCookie, userLogin } from '../data/api';
+import { getCsrfCookie, userLogin, validateToken } from '../data/api';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 type FormInitialValues = {
     email: string;
@@ -29,10 +30,16 @@ const useLoginForm = () => {
             await userLogin(values);
             router.push('/');
         } catch (error: any) {
-            if (error.response.data.status === 401) {
-                alert(error.response.data.message)
-            } else {
-                form.setErrors(error.response.data.data);
+            switch (error.response?.status) {
+                case 401:
+                    alert(error.response.data.message)
+                    break;
+                case 403:
+                    error.response.data && form.setErrors(error.response.data.data);
+                    break;
+                default:
+                    alert('An error happen!')
+                    break;
             }
         }
     };

@@ -133,4 +133,12 @@ class UserTest extends TestCase
         ]);
         $this->assertCount(1, Storage::allFiles('public/users/avatar'));
     }
+
+    public function test_validate_cookie() {
+        $user = User::factory()->create();
+
+        Sanctum::actingAs($user);
+        $response = $this->get('/api/validate', ['accept' => 'application/json']);
+        $response->assertStatus(200);
+    }
 }

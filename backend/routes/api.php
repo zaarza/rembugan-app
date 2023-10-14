@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->get('/validate', function () {
+    return response()->json([], 200);
 });
 
 Route::post('/users', [\App\Http\Controllers\UserController::class, 'register']);
