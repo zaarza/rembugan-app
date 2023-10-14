@@ -24,7 +24,7 @@ const ButtonIcon = ({
                     active
                         ? 'first:fill-primary'
                         : 'first:fill-slate-800 hover:first:fill-primary'
-                }`}
+                } w-full`}
             >
                 {icon}
             </div>
