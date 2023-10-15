@@ -28,7 +28,7 @@ class UserUpdateRequest extends FormRequest
             'email' => 'required|email',
             'description' => 'nullable|max:100',
             'status' => 'nullable|max:30',
-            'avatar' => 'nullable|mimes:jpeg,jpg,png|max:3072'
+            'avatar' => 'nullable|mimes:jpg,jpeg,png|max:3072'
         ];
     }
 

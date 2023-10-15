@@ -7,8 +7,10 @@ use App\Http\Requests\UserRegisterRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -46,20 +48,30 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function details(string $id): JsonResponse {
-        $user = User::where('id', $id)->first();
+    public function details(Request $request, string $id = null): JsonResponse {
+        $user = [];
 
-        if (!$user) {
-            throw new HttpResponseException(response()->json([
-                'status' => 404,
-                'data' => null,
-                'message' => "User not found"
-            ], 404));
+        // TODO: Send current user details if id not given
+        if (!$id) {
+            $user = new UserResource($request->user());
+        } else {
+            // TODO: Send related user
+            $user = User::where('id', $id)->first();
+
+            // * Not found
+            if (!$user) {
+                throw new HttpResponseException(response()->json([
+                    'status' => 404,
+                    'data' => null,
+                    'message' => "User not found"
+                ], 404));
+            }
         }
 
+        // * User found
         return response()->json([
             'status' => 200,
-            'data' => new UserResource($user),
+            'data' => $user,
             'message' => "Get user detail success"
         ]);
     }
@@ -98,5 +110,28 @@ class UserController extends Controller
             'data' => new UserResource($user),
             'message' => "Update user details success"
         ]);
+    }
+
+    public function deleteAvatar(Request $request) {
+        try {
+            $user = $request->user();
+            if ($oldAvatar = $user->avatar) {
+                Storage::delete($oldAvatar);
+                $user->avatar = '';
+                $user->save();
+            }
+
+            return response()->json([
+                'status' => 200,
+                'data' => new UserResource($user->fresh()),
+                'message' => "Delete avatar success"
+            ], 200);
+        } catch (Exception $exception) {
+            throw new HttpResponseException(response()->json([
+                'status' => 500,
+                'data' => null,
+                'message' => $exception->getMessage(),
+            ], 500));
+        }
     }
 }

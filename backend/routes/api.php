@@ -20,7 +20,9 @@ Route::middleware('auth:sanctum')->get('/validate', function () {
 });
 
 Route::post('/users', [\App\Http\Controllers\UserController::class, 'register']);
+Route::delete('/users/deleteAvatar', [\App\Http\Controllers\UserController::class, 'deleteAvatar']);
 Route::post('/users/login', [\App\Http\Controllers\UserController::class, 'login']);
+Route::get('/users', [\App\Http\Controllers\UserController::class, 'details']);
 Route::get('/users/{id}', [\App\Http\Controllers\UserController::class, 'details']);
 Route::post('/users/{id}', [\App\Http\Controllers\UserController::class, 'update']);
 

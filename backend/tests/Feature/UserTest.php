@@ -141,4 +141,22 @@ class UserTest extends TestCase
         $response = $this->get('/api/validate', ['accept' => 'application/json']);
         $response->assertStatus(200);
     }
+
+    public function test_get_current_user_details() {
+        $user = User::factory()->create();
+
+        Sanctum::actingAs($user);
+        $response = $this->get('/api/users/',
+            ['accept' => 'application/json']
+        );
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email
+            ]
+        ]);
+    }
 }
