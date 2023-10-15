@@ -208,7 +208,7 @@ class GroupController extends Controller
       'sender_id' => $data['sender_id'],
       'receiver_id' => $groupId
     ])->firstOr(fn() => false);
-
+    
     if (!$groupId || !$group || !$inbox) {
       throw new HttpResponseException(response()->json([
         'status' => 404,

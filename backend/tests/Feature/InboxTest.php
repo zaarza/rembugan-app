@@ -101,7 +101,7 @@ class InboxTest extends TestCase
         
         $response->assertStatus(201);
 
-        $this->assertDatabaseHas('inbox', [
+        $this->assertDatabaseHas('inboxes', [
             'type' => 'friend',
             'receiver_id' => $users[0]->id,
             'content' => $users[1]->id,

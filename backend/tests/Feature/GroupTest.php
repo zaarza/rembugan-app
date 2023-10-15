@@ -403,6 +403,7 @@ class GroupTest extends TestCase
             'user_id' => $users[0]->id,
             'is_admin' => true
         ]);
+        
 
         $joinRequest = Inbox::create([
             'type' => 'group-join-request',
@@ -430,7 +431,7 @@ class GroupTest extends TestCase
             'group_id' => $group->id,
         ]);
         // Inbox request deleted
-        $this->assertDatabaseMissing('inbox', $joinRequest->toArray());
+        $this->assertDatabaseMissing('inboxes', $joinRequest->toArray());
     }
 
     public function test_reject_group_join_request() {
@@ -472,7 +473,7 @@ class GroupTest extends TestCase
             'group_id' => $group->id,
         ]);
         // Inbox request deleted
-        $this->assertDatabaseMissing('inbox', $joinRequest->toArray());
+        $this->assertDatabaseMissing('inboxes', $joinRequest->toArray());
     }
 
 }
