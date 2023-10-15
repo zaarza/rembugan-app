@@ -49,6 +49,20 @@ class InboxController extends Controller
             ], 404));
         };
 
+        // * If inbox already exist
+        $isExist = Inbox::where([
+            ...$data,
+            'sender_id' => $request->user()->id,
+        ])->first();
+
+        if ($isExist) {
+            return response()->json([
+                'status' => 200,
+                'data' => $isExist,
+                'message' => 'Inbox already exist'
+            ], 200);
+        }
+
         $inboxToStore = [
             ...$data,
             'sender_id' => $request->user()->id,
