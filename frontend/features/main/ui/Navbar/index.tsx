@@ -54,7 +54,7 @@ const Navbar = () => {
               />
           </div>
 
-          <ProfileButton profilePicturePath='/assets/images/avatar-dummy.png' />
+          <ProfileButton />
       </div>
   );
 };

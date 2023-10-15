@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import confirmRequestType from '@/features/main/type/confirmRequest';
 import menuType from '@/type/menu';
+import { getCurrentUserDetails } from '@/features/auth/data/api';
 
 type useAppStoreType = {
     activeMenu: menuType,

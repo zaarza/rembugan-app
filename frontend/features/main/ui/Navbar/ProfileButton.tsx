@@ -1,15 +1,18 @@
-import { useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from 'react';
 import useOnClickOutside from '@/features/main/hooks/useOnClickOutside';
 import ModalMyProfile from '@/features/main/ui/reusable/Modals/MyProfile';
+import useUserStore from '@/store/user.store';
 
-const ProfileButton = ({
-  profilePicturePath,
-}: {
-  profilePicturePath: string;
-}) => {
+const ProfileButton = () => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const menuRef = useOnClickOutside(() => setShowMenu(false));
   const [showModalMyProfile, setShowModalMyProfile] = useState<boolean>(false);
+  const { user, fetchUser, logOut } = useUserStore((state) => ({ user: state.user, fetchUser: state.fetchUser, logOut: state.logOut }))
+
+  useEffect(() => {
+    fetchUser();
+  }, [])
 
   return (
       <>
@@ -22,8 +25,8 @@ const ProfileButton = ({
                   onClick={() => setShowMenu(!showMenu)}
               >
                   <img
-                      className='w-full'
-                      src={profilePicturePath}
+                      className='w-full h-full rounded-full'
+                    src={user.avatar || '/assets/illustrations/avatar-empty.svg'}
                       alt='User profile picture'
                   />
               </button>
@@ -41,7 +44,7 @@ const ProfileButton = ({
                   >
                       Profile Details
                   </button>
-                  <button className='w-full px-5 py-3 text-center bg-white text-slate-800 whitespace-nowrap hover:brightness-95'>
+                  <button className='w-full px-5 py-3 text-center bg-white text-slate-800 whitespace-nowrap hover:brightness-95' onClick={() => logOut()}>
                       Logout
                   </button>
               </div>

@@ -1,6 +1,7 @@
 import Menu from '@/features/main/ui/Menu';
 import Conversation from '@/features/main/ui/Conversation';
 import Navbar from '@/features/main/ui/Navbar';
+import Authenticated from '@/features/main/wrapper/Authenticated';
 
 const MainLayout = ({ children }: any) => {
     return (
@@ -12,11 +13,13 @@ const MainLayout = ({ children }: any) => {
 
 const Main = () => {
     return (
-        <MainLayout>
-            <Navbar />
-            <Menu />
-            <Conversation />
-        </MainLayout>
+        <Authenticated>
+            <MainLayout>
+                <Navbar />
+                <Menu />
+                <Conversation />
+            </MainLayout>
+        </Authenticated>
     );
 };
 
