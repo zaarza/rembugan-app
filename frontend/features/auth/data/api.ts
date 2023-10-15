@@ -49,6 +49,15 @@ export const updateCurrentUserDetails = async ({ id, name, email, description, s
 };
 
 export const deleteCurrentUserAvatar = async () => {
-    const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/users/deleteAvatar`)
+    const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/users/deleteAvatar`);
     return response;
-}
+};
+
+export const postFriendRequest = async ({ id, currentUserId }: { id: string; currentUserId: string }) => {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/inbox`, {
+        receiver_id: id,
+        content: currentUserId,
+        type: 'friend',
+    });
+    return response;
+};
