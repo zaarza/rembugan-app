@@ -18,8 +18,8 @@ const useLoginForm = () => {
             password: "",
         },
         validationSchema: Yup.object({
-            email: Yup.string().required(),
-            password: Yup.string().required(),
+            email: Yup.string().required('Email required'),
+            password: Yup.string().required('Password required'),
         }),
         onSubmit: (values) => submit(values),
     });

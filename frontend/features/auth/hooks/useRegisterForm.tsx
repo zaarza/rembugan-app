@@ -18,9 +18,9 @@ const useRegisterForm = () => {
             password: '',
         },
         validationSchema: Yup.object({
-            name: Yup.string().required(),
-            email: Yup.string().required(),
-            password: Yup.string().required(),
+            name: Yup.string().required('Name required'),
+            email: Yup.string().required('Email required'),
+            password: Yup.string().required('Password required'),
         }),
         onSubmit: (values) => submit(values),
     });
