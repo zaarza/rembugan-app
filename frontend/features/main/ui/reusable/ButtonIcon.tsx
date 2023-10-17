@@ -29,7 +29,7 @@ const ButtonIcon = ({
                 {icon}
             </div>
 
-            {notificationCount && notificationCount > 0 && (
+            {notificationCount !== undefined && notificationCount > 0 && (
                 <div className='absolute flex items-center justify-center w-4 text-xs text-center text-white rounded-full aspect-square -top-1 -right-1 bg-primary'>
                     <div>{notificationCount}</div>
                 </div>

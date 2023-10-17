@@ -15,7 +15,6 @@ const Navbar = () => {
           activeMenu: state.activeMenu,
           setActiveMenu: state.setActiveMenu,
       }));
-  const [showInbox, setShowInbox] = useState<boolean>(false);
 
   return (
       <div
@@ -30,10 +29,7 @@ const Navbar = () => {
                       action={() => setActiveConversationId(null)}
                   />
               </div>
-              <InboxButton
-                  show={showInbox}
-                  setShow={setShowInbox}
-              />
+              <InboxButton />
           </div>
 
           <div className='flex lg:flex-col gap-x-8 gap-y-6 justify-evenly'>

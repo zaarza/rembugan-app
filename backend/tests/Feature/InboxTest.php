@@ -188,4 +188,33 @@ class InboxTest extends TestCase
         $this->post('/api/inbox/'. $inbox->id  .'/markSeen', [], ['accept' => 'application/json'])
             ->assertStatus(404);
     }
+
+    public function test_mark_seen_many() {
+        $user = User::factory()->create();
+
+        $inbox1 = Inbox::create([
+           'type' => 'friend',
+           'sender_id' => 1,
+           'receiver_id' => $user->id,
+           'content' => 1
+        ]);
+        
+        $inbox2 = Inbox::create([
+           'type' => 'friend',
+           'sender_id' => 2,
+           'receiver_id' => $user->id,
+           'content' => 2
+        ]);
+
+        Sanctum::actingAs($user);
+        $response = $this->post('/api/inbox/markSeenMany', [
+            'inboxes_id' => [$inbox1->id, $inbox2->id]    
+        ],
+            ['accept' => 'application/json']
+        );
+
+        $response->assertStatus(200);
+        $this->assertEquals(1, $inbox1->fresh()->is_seen);
+        $this->assertEquals(1, $inbox2->fresh()->is_seen);
+    }
 }

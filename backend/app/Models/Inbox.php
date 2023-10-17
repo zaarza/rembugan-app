@@ -15,6 +15,6 @@ class Inbox extends Model
 
     public function sender_details(): BelongsTo
     {
-        return $this->belongsTo('users', 'id', 'sender_id');
+        return $this->belongsTo(User::class, 'sender_id', 'id');
     }
 }

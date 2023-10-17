@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\InboxMarkSeenManyRequest;
 use App\Http\Requests\InboxPostRequest;
 use App\Models\Group;
 use App\Models\Inbox;
@@ -10,19 +11,30 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class InboxController extends Controller
 {
     // Get current user inbox //
     public function get(Request $request): JsonResponse {
         // params: show = seen | unseen
-        $result = Inbox::where('receiver_id', $request->user()->id)
+        $result = Inbox::with('sender_details')
+            ->where('receiver_id', $request->user()->id)
+            ->when(!$request->show, function ($query, string $showQuery) {
+                $query->orderBy('created_at', 'desc');
+            })
             ->when($request->show, function ($query, string $showQuery) {
-                $showQuery === 'seen' ?  $query->where('is_seen', 1)->latest() : $query->where('is_seen', 0)->latest();
-            }, function ($query) {
-                $query->latest();
+                switch ($showQuery) {
+                    case 'seen':
+                        $query->where('is_seen', 1)->orderBy('created_at', 'desc');
+                        break;
+                    case 'unseen':
+                        $query->where('is_seen', 0)->orderBy('created_at', 'desc');
+                        break;
+                    default:
+                        $query->orderBy('created_at', 'desc');
+                }
             })->paginate(5);
-
         return response()->json([
             'status' => 200,
             'data' => $result,
@@ -97,6 +109,25 @@ class InboxController extends Controller
             'status' => 200,
             'data' => $inbox,
             'message' => 'Mark inbox seen success'
+        ], 200);
+    }
+
+    public function markSeenMany(InboxMarkSeenManyRequest $request) {
+        $data = $request->validated();
+
+        $unseenInboxes = Inbox::where([
+            'receiver_id' => $request->user()->id,
+            'is_seen' => false,
+        ])
+            ->whereIn('id', $data['inboxes_id']);
+
+        $unseenInboxes->get();
+        $unseenInboxes->update(['is_seen' => 1]);
+
+        return response()->json([
+            'status' => 200,
+            'data' => $unseenInboxes,
+            'message' => 'Mark inboxes as seen success'
         ], 200);
     }
 }

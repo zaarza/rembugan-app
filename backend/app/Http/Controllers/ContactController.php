@@ -165,4 +165,49 @@ class ContactController extends Controller
             ], 500));
         }
     }
+
+
+    /**
+     * Reject friend request from inbox with type 'friend'
+     */
+     public function reject(Request $request, string $senderId = null) {
+        // TODO: Check is inbox id valid
+        $inbox = Inbox::where([
+            'receiver_id' => $request->user()->id,
+            'sender_id' => $senderId,
+            'type' => 'friend'
+        ])->first();
+
+        // Not valid / not found
+        if (!$senderId || $inbox == null) {
+            throw new HttpResponseException(response()->json([
+                'status' => 404,
+                'data' => null,
+                'message' => 'Inbox not found'
+            ], 404));
+        }
+
+        // Valid
+        DB::beginTransaction();
+        try {
+            // TODO: Delete from inbox
+            $inbox->delete();
+
+            // TODO: Send success response
+            DB::commit();
+            return response()->json([
+                'status' => 200,
+                'data' => null,
+                'message' => 'Reject friend request success'
+            ], 200);
+        } catch (Exception $exception) {
+            // TODO: Send failed response
+            DB::rollBack();
+            throw new HttpResponseException(response()->json([
+                'status' => 500,
+                'data' => null,
+                'message' => $exception->getMessage()
+            ], 500));
+        }
+    }
 }

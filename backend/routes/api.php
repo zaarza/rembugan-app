@@ -30,7 +30,7 @@ Route::get('/contacts', [App\Http\Controllers\ContactController::class, 'list'])
 Route::post('/contacts/{id}', [App\Http\Controllers\ContactController::class, 'add'])->middleware('auth:sanctum');
 Route::delete('/contacts/{id}',[App\Http\Controllers\ContactController::class, 'delete'])->middleware('auth:sanctum');
 Route::post('/contacts/{senderId}/accept',[App\Http\Controllers\ContactController::class, 'accept'])->middleware('auth:sanctum');
-Route::post('/contacts/{senderId}/reject',[App\Http\Controllers\ContactController::class, 'reject'])->middleware('auth:sanctum');
+Route::delete('/contacts/{senderId}/reject',[App\Http\Controllers\ContactController::class, 'reject'])->middleware('auth:sanctum');
 
 Route::get('/messages', [App\Http\Controllers\MessageController::class, 'get'])->middleware('auth:sanctum');
 Route::get('/messages/{id}', [App\Http\Controllers\MessageController::class, 'get'])->middleware('auth:sanctum');
@@ -40,6 +40,7 @@ Route::post('/messages/{messageId}/markReaded', [App\Http\Controllers\MessageCon
 Route::get('/inbox', [App\Http\Controllers\InboxController::class, 'get'])->middleware('auth:sanctum');
 Route::post('/inbox', [App\Http\Controllers\InboxController::class, 'post'])->middleware('auth:sanctum');
 Route::post('/inbox/{inboxId}/markSeen', [App\Http\Controllers\InboxController::class, 'markSeen'])->middleware('auth:sanctum');
+Route::post('/inbox/markSeenMany', [App\Http\Controllers\InboxController::class, 'markSeenMany'])->middleware('auth:sanctum');
 
 Route::post('/groups', [App\Http\Controllers\GroupController::class, 'new'])->middleware('auth:sanctum');
 Route::get('/groups', [App\Http\Controllers\GroupController::class, 'get'])->middleware('auth:sanctum');
