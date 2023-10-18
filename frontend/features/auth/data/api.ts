@@ -62,8 +62,8 @@ export const postFriendRequest = async ({ id, currentUserId }: { id: string; cur
     return response;
 };
 
-export const getInboxes = async (page: number = 1, show: string = 'all') => {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/inbox?page=${page}&show=${show}`);
+export const getInboxes = async (page: number = 1) => {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/inbox?page=${page}`);
     return response;
 };
 
@@ -79,12 +79,5 @@ export const rejectFriendRequest = async (senderId: string) => {
 
 export const acceptFriendRequest = async (senderId: string) => {
     const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/contacts/${senderId}/accept`);
-    return response;
-}
-
-export const markInboxSeenMany = async (inboxes_id: string[]) => {
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/inbox/markSeenMany`, {
-        inboxes_id
-    });
     return response;
 }

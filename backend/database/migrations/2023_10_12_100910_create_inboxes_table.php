@@ -16,8 +16,6 @@ return new class extends Migration
             $table->enum('type', ['friend', 'group', 'group-join-request']);
             $table->string('sender_id');
             $table->string('receiver_id');
-            $table->string('content');
-            $table->boolean('is_seen')->default(false);
             $table->integer('created_at');
             $table->integer('updated_at');
         });

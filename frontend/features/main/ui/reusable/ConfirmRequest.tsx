@@ -31,18 +31,18 @@ type ConfirmRequestProps = {
     sender_id: string;
     time: number;
     profilePicturePath?: string;
-    type: 'friend' | 'group';
-    is_seen: number;
+    type: 'friend' | 'group' | 'group-join-request';
 };
 
-const ConfirmRequest = ({ id, sender_id, name, time, profilePicturePath, type, is_seen }: ConfirmRequestProps) => {
+const ConfirmRequest = ({ id, sender_id, name, time, profilePicturePath, type }: ConfirmRequestProps) => {
     const [showDetails, setShowDetails] = useState<boolean>(false);
     const { inboxes, deleteInbox, storeInbox } = useInboxesStore((state) => ({
         inboxes: state.inboxes,
         deleteInbox: state.deleteInbox,
         storeInbox: state.storeInbox,
+        
     }));
-    const rejectRequestHandler = async (id: string, type: 'friend' | 'group') => {
+    const rejectRequestHandler = async (id: string, type: 'friend' | 'group' | 'group-join-request') => {
         if (!confirm(`Reject friend request from ${name}?`)) {
             return;
         }
@@ -54,12 +54,12 @@ const ConfirmRequest = ({ id, sender_id, name, time, profilePicturePath, type, i
                 await rejectFriendRequest(sender_id);
             } catch (error: any) {
                 inbox && storeInbox(inbox);
-                alert('Failed to reject friend request!')
+                alert('Failed to reject friend request!');
             }
         }
     };
 
-    const acceptRequestHandler = async (id: string, type: 'friend' | 'group') => {
+    const acceptRequestHandler = async (id: string, type: 'friend' | 'group' | 'group-join-request') => {
         if (!confirm(`Accept friend request from ${name}?`)) {
             return;
         }
@@ -71,14 +71,14 @@ const ConfirmRequest = ({ id, sender_id, name, time, profilePicturePath, type, i
                 await acceptFriendRequest(sender_id);
             } catch (error: any) {
                 inbox && storeInbox(inbox);
-                alert('Failed to accept friend request!')
+                alert('Failed to accept friend request!');
             }
         }
     };
 
     return (
         <>
-            <div className={`flex gap-x-5 px-6 py-4 hover:bg-primary/5 ${is_seen === 1 ? 'bg-white' : 'bg-primary/5'}`}>
+            <div className={`flex gap-x-5 px-6 py-4 hover:bg-primary/5 bg-white`}>
                 <img
                     className='w-11 h-11 rounded-lg border border-black/10'
                     src={
@@ -119,6 +119,8 @@ const ConfirmRequest = ({ id, sender_id, name, time, profilePicturePath, type, i
                 id={sender_id}
                 show={showDetails}
                 toggleShow={() => setShowDetails(!showDetails)}
+                acceptRequestHandler={() => acceptRequestHandler(id, 'friend')}
+                rejectRequestHandler={() => rejectRequestHandler(id, 'friend')}
             />
         </>
     );

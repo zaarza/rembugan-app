@@ -27,7 +27,6 @@ class InboxPostRequest extends FormRequest
         return [
             'type' => Rule::in(['friend', 'group', 'group-join-request']),
             'receiver_id' => 'required',
-            'content' => 'required'
         ];
     }
 

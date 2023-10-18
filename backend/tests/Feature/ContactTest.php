@@ -134,7 +134,6 @@ class ContactTest extends TestCase
         $friendRequest = Inbox::create([
             'sender_id' => $users[1]->id,
             'receiver_id' => $users[0]->id,
-            'content' => $users[1]->id,
             'type' => 'friend'
         ]);
 
@@ -169,7 +168,6 @@ class ContactTest extends TestCase
                 'id' => $friendRequest->id,
                 'sender_id' => $users[1]->id,
                 'receiver_id' => $users[0]->id,
-                'content' => $users[0]->id,
                 'type' => 'friend'
             ]
         );

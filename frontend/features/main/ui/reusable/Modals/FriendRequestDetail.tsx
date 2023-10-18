@@ -4,17 +4,25 @@ import Modal from '@/features/main/ui/reusable/Modals';
 import Button from '@/features/main/ui/reusable/Button';
 import { useEffect, useState } from 'react';
 import { getUserDetailById } from '@/features/auth/data/api';
-import inboxType from '@/type/inboxType';
 import userType from '@/type/userType';
 import timeFormatter from '@/features/main/utils/timeFormatter';
+import useInboxesStore from '@/store/inboxes.store';
 
 type ModalFriendRequestDetailProps = {
     id: string;
     show: boolean;
     toggleShow: () => void;
+    acceptRequestHandler: () => Promise<void>;
+    rejectRequestHandler: () => Promise<void>;
 };
 
-const ModalFriendRequestDetail = ({ id, show, toggleShow }: ModalFriendRequestDetailProps) => {
+const ModalFriendRequestDetail = ({
+    id,
+    show,
+    toggleShow,
+    acceptRequestHandler,
+    rejectRequestHandler,
+}: ModalFriendRequestDetailProps) => {
     const [data, setData] = useState<userType | null>(null);
 
     useEffect(() => {
@@ -80,12 +88,18 @@ const ModalFriendRequestDetail = ({ id, show, toggleShow }: ModalFriendRequestDe
                         <Button
                             displayText='Reject'
                             variant='BORDER-PRIMARY'
-                            action={toggleShow}
+                            action={() => {
+                                rejectRequestHandler()
+                                toggleShow();
+                            }}
                         />
                         <Button
                             displayText='Accept'
                             variant='PRIMARY'
-                            type='submit'
+                            action={() => {
+                                acceptRequestHandler();
+                                toggleShow();
+                            }}
                         />
                     </div>
                 </div>

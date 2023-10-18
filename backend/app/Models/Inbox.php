@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Inbox extends Model
 {
     use HasFactory, HasUlids;
-    protected $fillable = ['type', 'is_seen', 'receiver_id', 'sender_id', 'content'];
+    protected $fillable = ['type', 'is_seen', 'receiver_id', 'sender_id'];
     protected $dateFormat = 'U';
 
     public function sender_details(): BelongsTo

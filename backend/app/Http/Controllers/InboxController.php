@@ -15,33 +15,21 @@ use Illuminate\Support\Facades\DB;
 
 class InboxController extends Controller
 {
-    // Get current user inbox //
+    /**
+     * Get current user inbox
+     */
     public function get(Request $request): JsonResponse {
-        // params: show = seen | unseen
         $result = Inbox::with('sender_details')
             ->where('receiver_id', $request->user()->id)
-            ->when(!$request->show, function ($query, string $showQuery) {
-                $query->orderBy('created_at', 'desc');
-            })
-            ->when($request->show, function ($query, string $showQuery) {
-                switch ($showQuery) {
-                    case 'seen':
-                        $query->where('is_seen', 1)->orderBy('created_at', 'desc');
-                        break;
-                    case 'unseen':
-                        $query->where('is_seen', 0)->orderBy('created_at', 'desc');
-                        break;
-                    default:
-                        $query->orderBy('created_at', 'desc');
-                }
-            })->paginate(5);
+            ->latest()
+            ->paginate(5);
+
         return response()->json([
             'status' => 200,
             'data' => $result,
             'message' => 'Get inbox success'
         ], 200);
     }
-
 
     /**
      * Create new inbox notification

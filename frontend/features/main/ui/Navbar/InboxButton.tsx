@@ -7,14 +7,11 @@ import useInboxButton from '@/features/main/hooks/useInboxButton';
 import inboxType from '@/type/inboxType';
 
 const InboxButton = () => {
-    const { inboxes } = useInboxesStore((store) => ({ inboxes: store.inboxes }));
+    const { inboxes } = useInboxesStore((state) => ({ inboxes: state.inboxes }));
     const {
         menuRef,
         setShowMenu,
         showMenu,
-        activeInboxCategory,
-        setActiveInboxCategory,
-        dataToShow,
         page,
         lastPage,
         setPage,
@@ -29,7 +26,6 @@ const InboxButton = () => {
                 icon={<IconFillNotificationBell />}
                 action={() => setShowMenu(!showMenu)}
                 active={showMenu}
-                notificationCount={inboxes.filter((inboxItem) => inboxItem.is_seen === 0).length || 0}
             />
             <div
                 className={`bg-white shadow-lg w-[360px] overflow-hidden flex flex-col gap-y-5 absolute bottom-0 lg:bottom-[inherit] lg:top-0 lg:left-0 -left-[50%] rounded-lg border-black/10 border duration-300 z-30 ${
@@ -44,31 +40,12 @@ const InboxButton = () => {
                     />
                 </div>
 
-                <div className='flex px-6 gap-x-4'>
-                    <InboxCategoryButton
-                        active={activeInboxCategory === 'all'}
-                        text='All'
-                        action={() => setActiveInboxCategory('all')}
-                    />
-                    <InboxCategoryButton
-                        active={activeInboxCategory === 'seen'}
-                        text='Seen'
-                        action={() => setActiveInboxCategory('seen')}
-                    />
-                    <InboxCategoryButton
-                        active={activeInboxCategory === 'unseen'}
-                        text='Unseen'
-                        action={() => setActiveInboxCategory('unseen')}
-                    />
-                </div>
-
                 <div className='flex flex-col overflow-auto max-h-80'>
-                    {dataToShow.length > 0 ? (
-                        dataToShow.map((inboxItem: inboxType, index: number) => (
+                    {inboxes.length > 0 ? (
+                        inboxes.map((inboxItem: inboxType, index: number) => (
                             <ConfirmRequest
                                 id={inboxItem?.id}
                                 sender_id={inboxItem?.sender_id}
-                                is_seen={inboxItem?.is_seen}
                                 name={inboxItem?.sender_details?.name || ''}
                                 time={inboxItem?.created_at}
                                 profilePicturePath={inboxItem?.sender_details?.avatar}
