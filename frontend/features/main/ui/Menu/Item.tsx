@@ -1,9 +1,9 @@
 import timeFormatter from "@/features/main/utils/timeFormatter";
 
 type MenuItemProps = {
-    name: string;
+    name?: string;
     time?: number;
-    message: string | number;
+    message?: string | number;
     notificationCount?: number;
     profilePicturePath?: string;
     action: () => any;
@@ -23,10 +23,9 @@ const MenuItem = ({
             type='button'
             onClick={() => action()}
         >
-            <div className='w-[54px] h-[54px] rounded-lg overflow-hidden'>
-                <img
-                    className='w-full'
-                    src={profilePicturePath}
+            <div className='rounded-lg overflow-hidden'>
+                <img className='w-[54px] aspect-square'
+                    src={profilePicturePath ? `${process.env.NEXT_PUBLIC_API_URL}${profilePicturePath}` : 'assets/illustrations/avatar-empty.svg'}
                     alt=''
                 />
             </div>

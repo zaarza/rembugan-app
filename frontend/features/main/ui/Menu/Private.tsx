@@ -72,7 +72,6 @@ const MenuPrivate = () => {
                             name={messageItem.name}
                             message={messageItem.message}
                             time={messageItem.time}
-                            profilePicturePath={messageItem.profilePicturePath}
                             key={`message-${index}`}
                             action={() => onClickMenuItem(messageItem.user_id)}
                         />

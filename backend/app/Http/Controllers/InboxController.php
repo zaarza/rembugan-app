@@ -37,6 +37,15 @@ class InboxController extends Controller
     public function post(InboxPostRequest $request): JsonResponse {
         $data = $request->validated();
 
+        // User cant send to herself
+        if ($data['receiver_id'] === $request->user()->id) {
+            throw new HttpResponseException(response()->json([
+                'status' => 403,
+                'data' => null,
+                'message' => 'Failed to post inbox, user cant sent to herself'    
+            ], 403));
+        }
+
         // TODO: Check whether the receiver ID matches the data in the user or group model
         $isReceiverIdValidInUserModel = User::findOr($data['receiver_id'], fn () => false);
         $isReceiverIdValidInGroupModel = Group::findOr($data['receiver_id'], fn () => false);

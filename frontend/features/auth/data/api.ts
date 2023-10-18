@@ -81,3 +81,8 @@ export const acceptFriendRequest = async (senderId: string) => {
     const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/contacts/${senderId}/accept`);
     return response;
 }
+
+export const getCurrentUserContacts = async (query: string = "") => {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/contacts?name=${query}`);
+    return response;
+}

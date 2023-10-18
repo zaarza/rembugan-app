@@ -8,6 +8,7 @@ use App\Models\Inbox;
 use App\Models\User;
 use ErrorException;
 use Exception;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,9 +18,15 @@ class ContactController extends Controller
 {
     // get current logged in user saved contacts
     public function list(Request $request) {
+        $result = Contact::with('details')
+            ->where('added_by', $request->user()->id)
+            ->when($request->name, function($query, string $nameQuery) {
+                $query->whereRelation('details', 'name', 'LIKE', "%$nameQuery%");
+            })->get();
+
         return response()->json([
             'status' => 200,
-            'data' => $request->user()->contacts,
+            'data' => $result,
             'message' => 'Get contacts success'
         ], 200);
     }
