@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\InboxSent;
 use App\Http\Requests\InboxMarkSeenManyRequest;
 use App\Http\Requests\InboxPostRequest;
 use App\Models\Group;
 use App\Models\Inbox;
 use App\Models\User;
+use Exception;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
@@ -58,6 +60,7 @@ class InboxController extends Controller
             ], 404));
         };
 
+        try {
         // * If inbox already exist
         $isExist = Inbox::where([
             ...$data,
@@ -78,12 +81,21 @@ class InboxController extends Controller
         ];
         
         $inbox = Inbox::create($inboxToStore);
+        broadcast(new InboxSent($data['receiver_id'], array(Inbox::with('sender_details')->find($inbox->id))))->toOthers();
 
         return response()->json([
             'status' => 201,
             'data' => $inbox,
             'message' => 'Post inbox success'
         ], 201);
+        
+        } catch (Exception $exception) {
+            throw new HttpResponseException(response()->json([
+                'status' => 500,
+                'data' => null,
+                'message' => $exception->getMessage(),
+            ], 500));
+        }
     }
 
     public function markSeen(Request $request, string $inboxId): JsonResponse {

@@ -3,6 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\Contact;
+use App\Models\Conversation;
+use App\Models\ConversationChat;
+use App\Models\ConversationParticipant;
 use App\Models\Inbox;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -92,15 +95,70 @@ class ContactTest extends TestCase
 
         $this->assertEmpty($user1->contacts);
 
-        Sanctum::actingAs($user1);
-        $this->post('/api/contacts/' . $user2->id, [], ['accept' => 'application/json'])->assertStatus(201);
-        $this->assertNotEmpty(Contact::where([
-            'added_by' => $user1->id,
-            'user_id' => $user2->id
-        ])->first());
+        Contact::create([
+            'user_id' => $user1->id,
+            'added_by' => $user2->id,    
+        ]);
+        Contact::create([
+            'user_id' => $user2->id,
+            'added_by' => $user1->id,    
+        ]);
 
-        $this->delete('api/contacts/'. $user2->id, [], ['accept' => 'application/json'])->assertStatus(200);
+        $conversation = Conversation::create();
+        $participant1 = ConversationParticipant::create([
+            'conversation_id' => $conversation->id,
+            'user_id' => $user1->id
+        ]);
+        $participant2 = ConversationParticipant::create([
+            'conversation_id' => $conversation->id,
+            'user_id' => $user2->id
+        ]);
+
+        $chats = ConversationChat::factory(5)->create([
+            'conversation_id' => $conversation->id,
+            'sender_id' => $user1->id
+        ]);
+
+        Sanctum::actingAs($user1);
+        $response = $this->delete('api/contacts/'. $user2->id . '?conversation_id=' . $conversation->id,
+        [
+            'accept' => 'application/json'
+        ]);
+        $response->assertStatus(200);
         $this->assertEmpty($user1->contacts);
+        $this->assertDatabaseMissing('conversations', ['id' => $conversation->id]);
+        $this->assertDatabaseMissing('conversation_chats', ['conversation_id' => $conversation->id]);
+        $this->assertDatabaseMissing('conversation_participants', ['conversation_id' => $conversation->id]);
+    }
+
+    public function testDeleteContactIfNoChatsAvailable() {
+        DB::beginTransaction();
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+
+        $this->assertEmpty($user1->contacts);
+
+        Contact::create([
+            'user_id' => $user1->id,
+            'added_by' => $user2->id,    
+        ]);
+        Contact::create([
+            'user_id' => $user2->id,
+            'added_by' => $user1->id,    
+        ]);
+
+        Sanctum::actingAs($user1);
+        $request = $this->delete('api/contacts/' . $user2->id);
+        $request->assertStatus(200);
+
+        $this->assertDatabaseMissing('contacts', [
+            'user_id' => $user1->id,
+            'added_by' => $user2->id,  
+        ]);
+        $this->assertDatabaseMissing('contacts', [
+            'user_id' => $user2->id,
+            'added_by' => $user1->id,    
+        ]);
     }
 
     public function testDeleteContactFailIfNoUserWithGivenId() {

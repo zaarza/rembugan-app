@@ -70,4 +70,9 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(Group::class, GroupMember::class, 'user_id', 'id', 'id', 'group_id');
     }
+
+    public function conversations(): HasManyThrough
+    {
+        return $this->hasManyThrough(Conversation::class, ConversationParticipant::class, 'user_id', 'id', 'id', 'conversation_id');
+    }
 }

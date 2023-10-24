@@ -86,3 +86,23 @@ export const getCurrentUserContacts = async (query: string = "") => {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/contacts?name=${query}`);
     return response;
 }
+
+export const getConversations = async () => {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/conversations`);
+    return response;
+}
+
+export const postConversationChat = async (data: { message: string, receiver_id?: string }, conversationId?: string ) => {
+    if (conversationId) {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/conversations/${conversationId}`, data);
+        return response;
+    } else {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/conversations`, data);
+        return response;
+    }
+};
+
+export const deleteContactById = async (id: string, conversationId?: string | null) => {
+    const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/contacts/${id}?conversation_id=${conversationId ? conversationId : ""}`);
+    return response;
+}

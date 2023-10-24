@@ -1,4 +1,4 @@
-import { useState, useRef, ChangeEvent } from 'react';
+import { useState, useRef } from 'react';
 import useOnClickOutside from '@/features/main/hooks/useOnClickOutside';
 import { IconFillPencil } from '@/shared/Icons';
 import Modal from '@/features/main/ui/reusable/Modals';

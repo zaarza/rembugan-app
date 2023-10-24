@@ -4,6 +4,7 @@ import ModalFriendRequestDetail from '@/features/main/ui/reusable/Modals/FriendR
 import timeFormatter from '../../utils/timeFormatter';
 import { acceptFriendRequest, rejectFriendRequest } from '@/features/auth/data/api';
 import useInboxesStore from '@/store/inboxes.store';
+import useContactsStore from '@/store/contacts.store';
 
 type confirmationButtonProps = {
     text?: string;
@@ -68,7 +69,8 @@ const ConfirmRequest = ({ id, sender_id, name, time, profilePicturePath, type }:
         if (type === 'friend') {
             try {
                 deleteInbox(id);
-                await acceptFriendRequest(sender_id);
+                const response = await acceptFriendRequest(sender_id);
+                useContactsStore.setState((store) => ({ contacts: [...store.contacts, response.data.data]}))
             } catch (error: any) {
                 inbox && storeInbox(inbox);
                 alert('Failed to accept friend request!');

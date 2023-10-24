@@ -61,16 +61,16 @@ class MessageController extends Controller
         // limit only 1/sender_id
         if (empty($result[$message->id])) {
           $result[$message['sender_id']] = [
+            'details' => User::where('id', $message['sender_id'])->first(),
             'unreaded' => count(Message::where([
               'is_readed' => false,
               'receiver_id' => $request->user()->id,
               'sender_id' => $message->sender_id,
             ])->get()),
             'pagination' => Message::orderBy('sent_at', 'desc')
-              ->where([
-                'receiver_id' => $request->user()->id,
-                'sender_id' => $message->sender_id
-              ])->paginate(5)
+              ->whereIn('receiver_id', [$request->user()->id, $message->sender_id])
+              ->whereIn('sender_id', [$request->user()->id, $message->sender_id])
+              ->paginate(5)
           ];
         }
       }

@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\ConversationController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +16,8 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Broadcast::routes();
 
 Route::middleware('auth:sanctum')->get('/validate', function () {
     return response()->json([], 200);
@@ -32,10 +36,9 @@ Route::delete('/contacts/{id}',[App\Http\Controllers\ContactController::class, '
 Route::post('/contacts/{senderId}/accept',[App\Http\Controllers\ContactController::class, 'accept'])->middleware('auth:sanctum');
 Route::delete('/contacts/{senderId}/reject',[App\Http\Controllers\ContactController::class, 'reject'])->middleware('auth:sanctum');
 
-Route::get('/messages', [App\Http\Controllers\MessageController::class, 'get'])->middleware('auth:sanctum');
-Route::get('/messages/{id}', [App\Http\Controllers\MessageController::class, 'get'])->middleware('auth:sanctum');
-Route::post('/messages', [App\Http\Controllers\MessageController::class, 'post'])->middleware('auth:sanctum');
-Route::post('/messages/{messageId}/markReaded', [App\Http\Controllers\MessageController::class, 'markReaded'])->middleware('auth:sanctum');
+Route::get('/conversations', [ConversationController::class, 'get'])->middleware('auth:sanctum');
+Route::post('/conversations/', [ConversationController::class, 'post'])->middleware('auth:sanctum');
+Route::post('/conversations/{conversationId}', [ConversationController::class, 'post'])->middleware('auth:sanctum');
 
 Route::get('/inbox', [App\Http\Controllers\InboxController::class, 'get'])->middleware('auth:sanctum');
 Route::post('/inbox', [App\Http\Controllers\InboxController::class, 'post'])->middleware('auth:sanctum');

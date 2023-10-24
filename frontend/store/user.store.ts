@@ -13,7 +13,27 @@ type useUserStoreType = {
 };
 
 const useUserStore = create<useUserStoreType>((set) => ({
+    user: {
+        id: '',
+        name: '',
+        email: '',
+        description: '',
+        status: '',
+        avatar: '',
+        is_online: 0,
+        last_seen: 0,
+        joined_at: 0,
+    },
     isLoggedIn: false,
+    fetchUser: async () => {
+        try {
+            const response = await getCurrentUserDetails();
+            set({ user: { ...response.data.data } });
+        } catch (error) {
+            return;
+        }
+    },
+    setUser: (data) => set((store) => ({ user: { ...store.user, ...data } })),
     logOut: (showConfirm = true) => {
         if (showConfirm && !confirm('Logout?')) {
             return;
@@ -22,26 +42,6 @@ const useUserStore = create<useUserStoreType>((set) => ({
         set({ isLoggedIn: false });
     },
     logIn: () => set({ isLoggedIn: true }),
-    user: {
-        id: '',
-        name: '',
-        email: '',
-        description: '',
-        status: '',
-        avatar: '',
-        is_online: false,
-        last_seen: 0,
-        joined_at: 0,
-    },
-    fetchUser: async () => {
-        try {
-            const response = await getCurrentUserDetails();
-            set({ user: { ...response.data.data } });
-        } catch (error) {
-            alert('Error when fetching user!');
-        }
-    },
-    setUser: (data) => set((store) => ({ user: { ...store.user, ...data } })),
 }));
 
 export default useUserStore;

@@ -2,9 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ContactDeleted;
+use App\Events\FriendRequestAccepted;
+use App\Http\Requests\ContactDeleteRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Contact;
+use App\Models\Conversation;
+use App\Models\ConversationChat;
+use App\Models\ConversationParticipant;
 use App\Models\Inbox;
+use App\Models\Message;
 use App\Models\User;
 use ErrorException;
 use Exception;
@@ -78,7 +85,7 @@ class ContactController extends Controller
         }
     }
 
-    public function delete(string$id, Request $request) {
+    public function delete(string $id, Request $request) {
         //  fail if no user with given id
         if (!User::where('id', $id)->first()) {
             throw new HttpResponseException(response()->json([
@@ -102,7 +109,38 @@ class ContactController extends Controller
 
         DB::beginTransaction();
         try {
+            $contact = Contact::where([
+                'user_id' => $id,
+                'added_by' => $request->user()->id,
+            ])->first();
             $contact->delete();
+            Contact::where([
+                'added_by' => $id,
+                'user_id' => $request->user()->id,
+            ])->first()->delete();
+            
+            // TODO: Delete conversation if given
+            if ($conversation_id = $request->get('conversation_id')) {
+                $conversation = Conversation::where('id', $conversation_id)->first();
+                if ($conversation === null) {
+                    throw new HttpResponseException(response()->json([
+                        'status' => 404,
+                        'data' => null,
+                        'message' => 'Conversation not found'
+                    ], 404));
+                };
+
+                $conversation->delete();
+
+                ConversationChat::where([
+                    'conversation_id' => $conversation_id,
+                ])->delete();
+                ConversationParticipant::where([
+                    'conversation_id' => $conversation_id,
+                ])->delete();
+            }
+            
+            broadcast(new ContactDeleted($id, $contact->added_by, $conversation_id))->toOthers();
             DB::commit();
             return response()->json([
                 'status' => 200,
@@ -147,7 +185,7 @@ class ContactController extends Controller
                 'added_by' => $request->user()->id,
                 'user_id' => $senderId
             ]);
-            Contact::firstOrCreate([
+            $contact2 = Contact::firstOrCreate([
                 'user_id' => $request->user()->id,
                 'added_by' => $senderId
             ]);
@@ -155,11 +193,12 @@ class ContactController extends Controller
             // TODO: Delete inbox
             $inbox->delete();
 
+            broadcast(new FriendRequestAccepted($senderId, array(Contact::with('details')->find($contact2->id))))->toOthers();
             // TODO: Send success response
             DB::commit();
             return response()->json([
                 'status' => 201,
-                'data' => $contact,
+                'data' => Contact::with('details')->find($contact->id),
                 'message' => 'Accept friend request success'
             ], 201);
         } catch (Exception $exception) {

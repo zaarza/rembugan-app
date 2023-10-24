@@ -18,7 +18,7 @@ const Authenticated = ({ children }: any) => {
                 logOut(false);
                 router.push('/login');
             } else {
-                logIn();
+                logIn();  
             }
         });
     }, [isLoggedIn]);

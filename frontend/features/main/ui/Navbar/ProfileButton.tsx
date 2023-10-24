@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useOnClickOutside from '@/features/main/hooks/useOnClickOutside';
 import ModalMyProfile from '@/features/main/ui/reusable/Modals/MyProfile';
 import useUserStore from '@/store/user.store';
@@ -8,15 +8,11 @@ const ProfileButton = () => {
     const [showMenu, setShowMenu] = useState<boolean>(false);
     const menuRef = useOnClickOutside(() => setShowMenu(false));
     const [showModalMyProfile, setShowModalMyProfile] = useState<boolean>(false);
-    const { user, fetchUser, logOut } = useUserStore((state) => ({
+    const { user, logOut } = useUserStore((state) => ({
         user: state.user,
         fetchUser: state.fetchUser,
         logOut: state.logOut,
     }));
-
-    useEffect(() => {
-        fetchUser();
-    }, []);
 
     return (
         <>

@@ -18,7 +18,7 @@ const ModalFriendRequestList = ({ show, toggleShow }: ModalFriendRequestListProp
             show={show}
             toggleShow={toggleShow}
         >
-            <div className='flex flex-col max-h-72 overflow-y-auto min-w-[450px]'>
+            <div className='flex flex-col max-h-72 overflow-y-auto w-[350px]'>
                 {friendRequestData.length > 0 ? (
                     friendRequestData.map((friendRequestDataItem, index) => (
                         <ConfirmRequest

@@ -8,30 +8,25 @@ import Searchbar from '@/features/main/ui/reusable/Searchbar';
 import MenuItem from '@/features/main/ui/Menu/Item';
 import ModalFriendRequestList from '@/features/main/ui/reusable/Modals/FriendRequestList';
 import useContactsStore from '@/store/contacts.store';
+import contactType from '@/type/contactType';
 
 const MenuContacts = () => {
-    const { contacts, fetch } = useContactsStore((state) => ({ contacts: state.contacts, fetch: state.fetch }));
+    const { contacts } = useContactsStore((state) => ({ contacts: state.contacts }));
     const [query, setQuery] = useState<string>('');
     const [showAddContactModal, setShowAddContactModal] = useState<boolean>(false);
     const [showModalFriendRequest, setShowModalFriendRequest] = useState<boolean>(false);
+    const [tempContacts, setTempContacts] = useState<contactType[]>([]);
 
     const submitQuery = (event: any) => {
         event.preventDefault();
     };
 
     useEffect(() => {
-        fetch();
-    }, []);
+        setTempContacts(contacts);
+    }, [contacts]);
 
     useEffect(() => {
-        // TODO: Api integration for query
-        const searchTimeout = setTimeout(() => {
-            fetch(query);
-        }, 1000);
-
-        return () => {
-            clearTimeout(searchTimeout);
-        };
+        setTempContacts(contacts.filter((contact) => contact.details.name.toLocaleLowerCase().includes(query.toLowerCase())));
     }, [query]);
 
     return (
@@ -58,20 +53,21 @@ const MenuContacts = () => {
                 </div>
 
                 <div className='flex flex-col overflow-auto pb-36 h-full'>
-                    {contacts.length > 0 ? (
-                        contacts.map((contactItem, index: number) => (
+                    {tempContacts.length > 0 ? (
+                        tempContacts.map((contactItem, index: number) => (
                             <MenuItem
+                                type='PRIVATE'
+                                targetId={contactItem.user_id}
                                 name={contactItem.details.name}
                                 message={contactItem.details.status}
                                 profilePicturePath={contactItem.details.avatar}
                                 key={`message-${index}`}
-                                action={() => {}}
                             />
                         ))
                     ) : (
                         <div className='flex justify-center items-center py-5 px-6 m-auto absolute top-[48%] left-0 right-0'>
                             <div className='text-sm text-slate-500 text-center'>
-                                You don't have any contact, try{' '}
+                                {query.length > 0 ? 'No contact found' : "You don't have any contact"}, try{' '}
                                 <button
                                     type='button'
                                     className='cursor-pointer text-primary underline underline-offset-2'

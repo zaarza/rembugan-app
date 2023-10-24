@@ -5,6 +5,7 @@ import InboxCategoryButton from '@/features/main/ui/Navbar/InboxCategoryButton';
 import useInboxesStore from '@/store/inboxes.store';
 import useInboxButton from '@/features/main/hooks/useInboxButton';
 import inboxType from '@/type/inboxType';
+import { useEffect } from 'react';
 
 const InboxButton = () => {
     const { inboxes } = useInboxesStore((state) => ({ inboxes: state.inboxes }));

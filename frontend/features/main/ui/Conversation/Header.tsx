@@ -1,19 +1,21 @@
 import { IconLineArrowLeft } from '@/shared/Icons';
 
 type ConversationHeaderProps = {
-  name: string;
-  status: string;
-  profilePicturePath: string;
+  name?: string;
+  isOnline?: boolean;
+  isTyping: boolean;
+  profilePicturePath?: string;
   showSidebarHandler: () => void;
-  setShowConversation: (setShowConversation: boolean) => void;
+  toggleConversation: () => void;
 };
 
 const ConversationHeader = ({
   name,
-  status,
+  isOnline,
+  isTyping,
   profilePicturePath,
   showSidebarHandler,
-  setShowConversation,
+  toggleConversation,
 }: ConversationHeaderProps) => {
   return (
       <div className='sticky top-0 flex items-center justify-between px-3 py-3 bg-white border border-l-0 title lg:px-8 border-b-black/10'>
@@ -21,20 +23,20 @@ const ConversationHeader = ({
               <button
                   type='button'
                   className='w-5 lg:hidden group'
-                  onClick={() => setShowConversation(false)}
+                  onClick={() => toggleConversation()}
               >
                   <IconLineArrowLeft />
               </button>
               <img
-                  src={profilePicturePath}
+                  src={profilePicturePath ? `${process.env.NEXT_PUBLIC_API}${profilePicturePath}` : "/assets/illustrations/avatar-empty.svg"}
                   className='w-12 rounded-lg aspect-square'
-                  alt={`${name}`}
+                  alt={`${name || ""}`}
               />
               <div className='flex flex-col justify-center gap-y-1'>
                   <h1 className='text-sm font-medium text-slate-800'>
-                      {name}
+                      {name || ""}
                   </h1>
-                  <h2 className='text-xs text-primary'>{status}</h2>
+                  <h2 className='text-xs text-primary'>{isTyping ? "Typing..." : isOnline !== undefined ? (isOnline ? "Online" : "Offline") : ""}</h2>
               </div>
           </div>
           <button

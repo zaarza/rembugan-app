@@ -16,18 +16,22 @@ import ModalInviteContacts from '@/features/main/ui/reusable/Modals/InviteContac
 import ModalMemberInfo from '@/features/main/ui/reusable/Modals/MemberInfo';
 import ModalUpdateGroupInfo from '@/features/main/ui/reusable/Modals/UpdateGroupInfo';
 import timeFormatter from '@/features/main/utils/timeFormatter';
+import useContactsStore from '@/store/contacts.store';
+import { deleteContactById } from '@/features/auth/data/api';
+import useConversationStore from '@/store/conversations.store';
 
 type ConversationSidebarProps = {
     data: {
-        name: string;
-        id: number;
-        description: string;
+        name?: string;
+        id?: string;
+        description?: string;
         email?: string;
         joinedAt?: number;
         status?: string;
         membership?: number;
         creator?: string;
         createdAt?: number;
+        avatar?: string;
     };
     show: boolean;
     toggleSidebar: () => void;
@@ -39,8 +43,12 @@ const ConversationSidebar = ({
     toggleSidebar,
 }: ConversationSidebarProps) => {
     const [showAction, setShowAction] = useState<boolean>(false);
-    const { activeConversationType } = useAppStore((state) => ({
+    const { activeConversationType, setActiveConversationId, setShowConversation, setActiveTargetId, activeConversationId } = useAppStore((state) => ({
         activeConversationType: state.activeConversationType,
+        setActiveConversationId: state.setActiveConversationId,
+        setActiveTargetId: state.setActiveTargetId,
+        setShowConversation: state.setShowConversation,
+        activeConversationId: state.activeConversationId
     }));
     const actionRef = useOnClickOutside(() => setShowAction(false));
     const [showModalMemberInfo, setShowModalMemberInfo] =
@@ -49,6 +57,34 @@ const ConversationSidebar = ({
         useState<boolean>(false);
     const [showModalUpdateGroupInfo, setShowModalUpdateGroupInfo] =
         useState<boolean>(false);
+    const { contacts, deleteContact, addContact, findContact } = useContactsStore((state) => ({contacts: state.contacts, deleteContact: state.deleteContact, addContact: state.addContact, findContact: state.findContact}));
+const { deletePersonConversation } = useConversationStore((state) => ({ deletePersonConversation: state.deletePersonConversation }));
+    const deleteContactHandler = async (id: string) => {
+        const contact = findContact(id);
+        const currentConversation = activeConversationId && useConversationStore.getState().conversations[activeConversationId]
+
+        try {
+            if (!contact) {
+                alert("Contact not found!")
+                return;
+            }
+
+            if (!confirm(`Delete ${contact.details.name} from friendlist?`)) {
+                return;
+            }
+
+            toggleSidebar();
+            setActiveTargetId(null)
+            setShowConversation(false);
+            deleteContact(id);
+            activeConversationId && deletePersonConversation(activeConversationId)
+            await deleteContactById(id, activeConversationId)
+            setActiveConversationId(null);
+        } catch (error) {
+            contact && addContact(contact);
+            currentConversation && useConversationStore.setState((state) => ({ conversations: {...state.conversations, currentConversation}}));
+        }
+    }
 
     return (
         <>
@@ -89,13 +125,13 @@ const ConversationSidebar = ({
                                 }`}
                                 ref={actionRef}
                             >
-                                <div className='py-3 px-5 text-red-500 whitespace-nowrap bg-white hover:brightness-95'>
+                                <div className='py-3 px-5 text-red-500 whitespace-nowrap bg-white hover:brightness-95' onClick={() => data.id && deleteContactHandler(data.id)}>
                                     Delete Contact
                                 </div>
                             </div>
                         )}
 
-                        {activeConversationType === 'GROUPS' && (
+                        {activeConversationType === 'GROUP' && (
                             <div
                                 className={`bg-white overflow-hidden rounded-lg border border-black/10 absolute right-0 top-[50px] ${
                                     showAction ? 'block' : 'hidden'
@@ -130,14 +166,14 @@ const ConversationSidebar = ({
                 <div className='flex flex-col gap-y-3'>
                     <img
                         className='rounded-lg self-center max-w-[100px] w-full min-w-[24px]'
-                        src='/assets/images/avatar2-dummy.png'
+                        src={data.avatar ? `${process.env.NEXT_PUBLIC_API_URL}/${data.avatar}` : "/assets/illustrations/avatar-empty.svg"}
                         alt=''
                     />
                     <div className='flex flex-col items-center gap-y-1'>
                         <h1 className='font-semibold text-slate-800'>
-                            {data.name}
+                            {data.name || ""}
                         </h1>
-                        <h2 className='text-xs text-slate-500'>@{data.id}</h2>
+                        <h2 className='text-xs text-slate-500'>@{data.id || ""}</h2>
                     </div>
                 </div>
                 <div className='flex flex-col gap-y-1'>
@@ -148,7 +184,7 @@ const ConversationSidebar = ({
                         Description
                     </h1>
                     <h2 className='text-xs text-slate-800'>
-                        {data.description}
+                        {data.description || "No description"}
                     </h2>
                 </div>
                 <div className='flex flex-col gap-y-1'>
@@ -166,7 +202,7 @@ const ConversationSidebar = ({
                                     <IconFillMail />
                                 </div>
                                 <p className='text-xs text-slate-800'>
-                                    {data.email}
+                                    {data.email || ""}
                                 </p>
                             </span>
                             <span
@@ -178,7 +214,7 @@ const ConversationSidebar = ({
                                 </div>
                                 <p className='text-xs text-slate-800'>
                                     {data.joinedAt &&
-                                        timeFormatter(data.joinedAt)}
+                                        "Joined at " + timeFormatter(data.joinedAt)}
                                 </p>
                             </span>
                             <span
@@ -189,13 +225,13 @@ const ConversationSidebar = ({
                                     <IconFillSmile />
                                 </div>
                                 <p className='text-xs text-slate-800'>
-                                    {data.status}
+                                    {data.status || "No status"}
                                 </p>
                             </span>
                         </div>
                     )}
 
-                    {activeConversationType === 'GROUPS' && (
+                    {activeConversationType === 'GROUP' && (
                         <div className='flex flex-col gap-y-2'>
                             <span
                                 title='Membership'
@@ -235,7 +271,7 @@ const ConversationSidebar = ({
                         </div>
                     )}
                 </div>
-                {activeConversationType === 'GROUPS' && (
+                {activeConversationType === 'GROUP' && (
                     <div className='flex flex-col gap-y-2'>
                         <h3 className='font-medium text-sm text-slate-800'>
                             Members ({data.membership})
