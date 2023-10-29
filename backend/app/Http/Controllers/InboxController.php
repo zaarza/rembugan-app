@@ -67,7 +67,7 @@ class InboxController extends Controller
             'sender_id' => $request->user()->id,
         ])->first();
 
-        if ($isExist) {
+        if ($isExist !== null) {
             return response()->json([
                 'status' => 200,
                 'data' => $isExist,

@@ -6,6 +6,7 @@ import useConversationsStore from '@/store/conversations.store';
 import useContactsStore from '@/store/contacts.store';
 import useUserStore from '@/store/user.store';
 import ItemSkeleton from './ItemSkeleton';
+import chatType from '@/type/chatType';
 
 const MenuPrivate = () => {
     const [query, setQuery] = useState<string>('');
@@ -50,11 +51,11 @@ const MenuPrivate = () => {
                 <div className='flex flex-col overflow-auto pb-36 h-full'>
                     {Object.keys(conversations).length > 0 ? (
                         Object.keys(conversations).map((conversation, index: number) => {
-                            const lastMessage =
+                            let lastMessage: chatType | undefined =
                                 conversations[conversation][0].chats[conversations[conversation][0].chats.length - 1];
                             const lastMessageUser =
                                 lastMessage.sender_id === user.id ? user : findContact(lastMessage.sender_id)?.details;
-                        
+
                             const unseenMessagesCount = conversations[conversation][0].chats.filter(
                                 (chat) => chat.is_seen === 0
                             ).length;
@@ -62,9 +63,16 @@ const MenuPrivate = () => {
                                 (participantItem) => participantItem.user_id !== user.id
                             )[0];
 
+                            if (query.length > 0) {
+                                lastMessage = conversations[conversation][0].chats.find((chat) =>
+                                    chat.message.toLowerCase().includes(query.toLowerCase())
+                                );
+                                if (!lastMessage) return;
+                            }
+
                             return (
                                 <MenuItem
-                                    name={findContact(target.user_id)?.details.name || "Unknown"}
+                                    name={findContact(target.user_id)?.details.name || 'Unknown'}
                                     conversationId={conversation}
                                     message={lastMessage.message}
                                     time={lastMessage.sent_at}

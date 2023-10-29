@@ -88,10 +88,7 @@ const useUpdateProfileForm = (callbacks: (() => void)[]) => {
 
     const deleteAvatarHandler = async () => {
         let oldAvatar = user.avatar;
-
-        if (!confirm('Are you sure want to delete your profile picture?')) {
-            return;
-        }
+        if (!confirm('Are you sure want to delete your profile picture?')) return;
 
         if (!form.initialValues.avatar) {
             form.setFieldValue('avatar', '');
@@ -101,9 +98,9 @@ const useUpdateProfileForm = (callbacks: (() => void)[]) => {
         try {
             form.setFieldValue('avatar', null);
             await deleteCurrentUserAvatar();
-            setUser({ avatar: undefined });
+            useUserStore.setState((store) => ({ user: { ...store.user, avatar: null } }));
         } catch (error: any) {
-            setUser({ avatar: oldAvatar });
+            useUserStore.setState((store) => ({ user: { ...store.user, avatar: oldAvatar } }));
         }
     };
 

@@ -3,6 +3,7 @@
 use App\Models\Contact;
 use App\Models\Conversation;
 use App\Models\ConversationParticipant;
+use App\Models\GroupMember;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 
@@ -33,6 +34,20 @@ Broadcast::channel('chat.{id}', function ($user, $id) {
 
     if ($id === $user->id || $isExistOnContact !== null) {
         return $user->toArray();
+    } else {
+        return false;
+    }
+});
+
+Broadcast::channel('group.{groupId}', function ($user, $groupId) {
+    // TODO: Check is current user a member in related group
+    $result = GroupMember::where([
+        'group_id' => $groupId,
+        'user_id' => $user->id
+    ])->first();
+
+    if ($result !== null) {
+        return $result->toArray();
     } else {
         return false;
     }

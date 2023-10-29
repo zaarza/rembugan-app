@@ -1,10 +1,10 @@
 'use client';
 
 import Menu from '@/features/main/ui/Menu';
-import Conversation from '@/features/main/ui/Conversation';
+import Conversation from '@/features/main/ui/Conversation/index';
 import Navbar from '@/features/main/ui/Navbar';
 import Authenticated from '@/features/main/wrapper/Authenticated';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useContactsStore from '@/store/contacts.store';
 import useMessagesStore from '@/store/conversations.store';
 import useUserStore from '@/store/user.store';
@@ -15,6 +15,8 @@ import pusherJs from 'pusher-js';
 import useInboxesStore from '@/store/inboxes.store';
 import chatType from '@/type/chatType';
 import useAppStore from '@/store/app.store';
+import useGroupsStore from '@/store/groups.store';
+import groupType from '@/type/groupType';
 
 declare global {
     interface Window {
@@ -33,13 +35,19 @@ const Main = () => {
     const { fetchContacts } = useContactsStore((state) => ({ fetchContacts: state.fetchContacts }));
     const { fetchUser, user } = useUserStore((state) => ({ fetchUser: state.fetchUser, user: state.user }));
     const { fetchConversations } = useMessagesStore((state) => ({ fetchConversations: state.fetchConversations }));
-    const audio = new Audio('/assets/audio/pop.mp3');
+    const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
     const Pusher = pusherJs;
+    const { fetchGroups, groups } = useGroupsStore((state) => ({
+        fetchGroups: state.fetchGroups,
+        groups: state.groups,
+    }));
 
     useEffect(() => {
         fetchUser();
         fetchContacts();
         fetchConversations();
+        fetchGroups();
+        setAudio(new Audio('/assets/audio/pop.mp3'));
     }, []);
 
     useEffect(() => {
@@ -73,7 +81,6 @@ const Main = () => {
                                     callback(null, response.data);
                                 })
                                 .catch((error) => {
-                                    console.log('unauthorized');
                                     callback(error);
                                 });
                         },
@@ -83,10 +90,8 @@ const Main = () => {
         }
 
         if (user.id.length > 0) {
-            window.Echo.join(`chat.${user.id}`)
-            .listen('.PrivateMessageSent', (event: chatType[]) => {
-                audio.play();
-                console.log('ok');
+            window.Echo.join(`chat.${user.id}`).listen('.PrivateMessageSent', (event: chatType[]) => {
+                audio?.play();
                 const conversations = useConversationStore.getState().conversations;
 
                 event.forEach((chatItem) => {
@@ -118,25 +123,27 @@ const Main = () => {
                 });
 
                 useConversationStore.setState({ conversations });
-            })
+            });
 
             window.Echo.channel(user.id)
                 .listen('.InboxSent', (event: any) => {
-                    audio.play();
+                    audio?.play();
                     useInboxesStore.setState((store) => ({ inboxes: [...store.inboxes, ...event] }));
                 })
                 .listen('.FriendRequestAccepted', (event: any) => {
-                    audio.play();
+                    audio?.play();
                     useContactsStore.setState((store) => ({ contacts: [...store.contacts, ...event] }));
                 })
-                .listen('.ContactDeleted', (event: { conversation_id: string | null, contact_id: string }) => {
-
+                .listen('.ContactDeleted', (event: { conversation_id: string | null; contact_id: string }) => {
                     useContactsStore.setState((store) => ({
                         contacts: [...store.contacts.filter((contact) => contact.user_id !== event.contact_id)],
                     }));
 
-                    if (useAppStore.getState().activeConversationId === event.conversation_id || useAppStore.getState().activeTargetId === event.contact_id) {
-                        useAppStore.getState().reset()
+                    if (
+                        useAppStore.getState().activeConversationId === event.conversation_id ||
+                        useAppStore.getState().activeTargetId === event.contact_id
+                    ) {
+                        useAppStore.getState().reset();
                     }
 
                     if (event.conversation_id) {

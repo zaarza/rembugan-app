@@ -20,6 +20,8 @@ class Group extends Model
     ];
     const UPDATED_AT = null;
 
+    protected $with = ['members', 'messages'];
+
     public function members(): HasMany
     {
         return $this->hasMany(GroupMember::class, 'group_id', 'id');

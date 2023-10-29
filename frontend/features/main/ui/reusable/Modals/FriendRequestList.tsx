@@ -23,10 +23,8 @@ const ModalFriendRequestList = ({ show, toggleShow }: ModalFriendRequestListProp
                     friendRequestData.map((friendRequestDataItem, index) => (
                         <ConfirmRequest
                             id={friendRequestDataItem.id}
-                            name={friendRequestDataItem.sender_details.name}
                             sender_id={friendRequestDataItem.sender_details.id}
                             time={friendRequestDataItem.created_at}
-                            profilePicturePath={friendRequestDataItem.sender_details.avatar}
                             type='friend'
                             key={`friend-request-${index}`}
                         />

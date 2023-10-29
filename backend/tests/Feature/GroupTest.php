@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Contact;
 use App\Models\Group;
 use App\Models\GroupMember;
 use App\Models\GroupMessage;
@@ -476,4 +477,76 @@ class GroupTest extends TestCase
         $this->assertDatabaseMissing('inboxes', $joinRequest->toArray());
     }
 
+    public function test_post_group_message()
+    {
+        $user = User::factory()->create();
+        $group = Group::create([
+            'created_by' => $user->id,
+            'name' => 'Random',
+        ]);
+
+        GroupMember::create([
+            'user_id' => $user->id,
+            'group_id' => $group->id,
+            'is_admin' => 1,
+        ]);
+
+        Sanctum::actingAs($user);
+        $response = $this->post('/api/groupMessages/' . $group->id, [
+            'message' => "Hello world",
+        ], [
+            'accept' => 'application/json',
+        ]);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('group_messages', [
+            'content' => "Hello world",
+            'group_id' => $group->id,
+            'sender_id' => $user->id,
+        ]);
+    }
+
+    public function test_invite_contacts_into_a_group() {
+        $users = User::factory(3)->create();
+
+        for ($i = 1; $i < 3; $i++) {
+            Contact::create([
+                'added_by' => $users[0]->id,
+                'user_id' => $users[$i]->id    
+            ]);
+
+            Contact::create([
+                'user_id' => $users[0]->id,
+                'added_by' => $users[$i]->id    
+            ]);
+        }
+
+        $group = Group::factory()->create([
+            'created_by' => $users[0]->id
+        ]);
+        $groupMember = GroupMember::create([
+           'group_id' => $group->id,
+           'user_id' => $users[0]->id,
+           'is_admin' => 1,
+        ]);
+
+        Sanctum::actingAs($users[0]);
+        $response = $this->post('/api/groups/' . $group->id . '/invite', [
+            'users_id' => [$users[1]->id, $users[2]->id],
+        ], [
+            'accept' => 'application/json'
+        ]);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('inboxes', [
+            'type' => 'group',
+            'receiver_id' => $users[1]->id,
+            'sender_id' => $group->id    
+        ]);
+        $this->assertDatabaseHas('inboxes', [
+            'type' => 'group',
+            'receiver_id' => $users[2]->id,
+            'sender_id' => $group->id    
+        ]);
+    }
 }

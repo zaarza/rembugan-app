@@ -26,7 +26,9 @@ const MenuContacts = () => {
     }, [contacts]);
 
     useEffect(() => {
-        setTempContacts(contacts.filter((contact) => contact.details.name.toLocaleLowerCase().includes(query.toLowerCase())));
+        setTempContacts(
+            contacts.filter((contact) => contact.details.name.toLocaleLowerCase().includes(query.toLowerCase()))
+        );
     }, [query]);
 
     return (
@@ -59,7 +61,6 @@ const MenuContacts = () => {
                                 type='PRIVATE'
                                 targetId={contactItem.user_id}
                                 name={contactItem.details.name}
-                                message={contactItem.details.status}
                                 profilePicturePath={contactItem.details.avatar}
                                 key={`message-${index}`}
                             />

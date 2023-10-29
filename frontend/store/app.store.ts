@@ -11,7 +11,7 @@ type useAppStoreType = {
     setActiveConversationType: (activeConversationType: 'PRIVATE' | 'GROUP') => void;
     activeTargetId: string | null;
     setActiveTargetId: (id: string | null) => void;
-    activeConversationId?: string | null;
+    activeConversationId: string | null;
     setActiveConversationId: (activeConversationId: string | null | undefined) => void;
     showConversation: boolean;
     setShowConversation: (showConversation: boolean) => void;
@@ -29,7 +29,7 @@ const useAppStore = create<useAppStoreType>((set) => ({
     setActiveConversationType: (activeConversationType) => set({ activeConversationType }),
     showConversation: false,
     setShowConversation: (showConversation) => set({ showConversation }),
-    reset: () => set({ activeConversationId: null, showConversation: false, activeTargetId: null}),
+    reset: () => set({ activeConversationId: null, showConversation: false, activeTargetId: null }),
 
     inbox: [],
     setInbox: (inbox) => set((store) => ({ inbox: [...store.inbox, inbox] })),

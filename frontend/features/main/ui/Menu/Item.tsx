@@ -1,6 +1,7 @@
 import timeFormatter from '@/features/main/utils/timeFormatter';
 import useAppStore from '@/store/app.store';
 import useConversationStore from '@/store/conversations.store';
+import useGroupsStore from '@/store/groups.store';
 
 type MenuItemProps = {
     conversationId?: string;
@@ -8,7 +9,7 @@ type MenuItemProps = {
     time?: number;
     message?: string | number;
     notificationCount?: number;
-    profilePicturePath?: string;
+    profilePicturePath?: string | null;
     type: 'PRIVATE' | 'GROUP';
     targetId: string;
 };
@@ -39,23 +40,33 @@ const MenuItem = ({
 
     const onClickMenuItemHandler = (type: 'PRIVATE' | 'GROUP', conversationId?: string) => {
         setActiveTargetId(targetId);
-        setShowConversation(true);
-        
-        // Check is conversation already exist
-        if (conversationId === undefined) {
-            const findConversationIdInStore = Object.keys(useConversationStore.getState().conversations).find((conversationId) => {
-                return useConversationStore.getState().conversations[conversationId][0].participants.find((participantItem) => participantItem.user_id === targetId)
-            })
-            
-            if (findConversationIdInStore !== undefined) setActiveConversationId(findConversationIdInStore);
-        } else {
-            setActiveConversationId(conversationId);
-        }
 
         if (type === 'PRIVATE') {
+            // Check is conversation already exist
+            if (conversationId === undefined) {
+                const findConversationIdInStore = Object.keys(useConversationStore.getState().conversations).find(
+                    (conversationId) => {
+                        return useConversationStore
+                            .getState()
+                            .conversations[conversationId][0].participants.find(
+                                (participantItem) => participantItem.user_id === targetId
+                            );
+                    }
+                );
+
+                if (findConversationIdInStore !== undefined) setActiveConversationId(findConversationIdInStore);
+            } else {
+                setActiveConversationId(conversationId);
+            }
+
             setActiveConversationType('PRIVATE');
-        } else {
+            setShowConversation(true);
+        }
+
+        if (type === 'GROUP') {
             setActiveConversationType('GROUP');
+            setActiveConversationId(targetId);
+            setShowConversation(true);
         }
     };
 
