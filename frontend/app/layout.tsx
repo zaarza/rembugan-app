@@ -1,10 +1,6 @@
 import './global.css';
 
-export default function RootLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang='en'>
             <head>
@@ -23,7 +19,7 @@ export default function RootLayout({
                 />
             </head>
             <body
-                className='font-poppins bg-primary/5'
+                className='font-poppins bg-primary/5 max-w-screen-xl mx-auto'
                 id='body'
             >
                 {children}

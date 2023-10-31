@@ -44,6 +44,7 @@ const MenuItem = ({
         if (type === 'PRIVATE') {
             // Check is conversation already exist
             if (conversationId === undefined) {
+                setActiveConversationId(null);
                 const findConversationIdInStore = Object.keys(useConversationStore.getState().conversations).find(
                     (conversationId) => {
                         return useConversationStore

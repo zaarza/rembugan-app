@@ -1,16 +1,13 @@
 'use client';
-import Carousel from "@/features/auth/ui/Carousel";
-import Guest from '@/features/auth/wrapper/Guest';
+import Layout from '@/src/layouts/AuthLayout';
 
-const AuthLayout = ({ children }: any) => {
-    return (
-        <Guest>
-            <div className="flex flex-col lg:flex-row w-full lg:min-h-screen">
-                <Carousel />
-                {children}
-            </div>
-        </Guest>
-    )
+type TAuthLayout = {
+    children: React.ReactNode;
+};
+
+const AuthLayout = (props: TAuthLayout) => {
+    const { children } = props;
+    return <Layout>{children}</Layout>;
 };
 
 export default AuthLayout;

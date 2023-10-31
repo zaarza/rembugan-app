@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 Broadcast::routes();
 
 Route::middleware('auth:sanctum')->get('/validate', function () {
-    return response()->json([], 200);
+    return http_response_code(200);
 });
 
 Route::post('/users', [\App\Http\Controllers\UserController::class, 'register']);
@@ -61,3 +61,7 @@ Route::post('/groupMessages/{groupId}', [App\Http\Controllers\GroupMessageContro
 
 Route::delete('/groupMembers/{groupId}/{userId}/kick', [\App\Http\Controllers\GroupMemberController::class, 'kick'])->middleware('auth:sanctum');
 Route::post('/groupMembers/{groupId}/{userId}/setAdmin', [\App\Http\Controllers\GroupMemberController::class, 'setAdmin'])->middleware('auth:sanctum');
+
+Route::get('/test', function () {
+    return response()->json(["message" => "Hello world"]);
+});

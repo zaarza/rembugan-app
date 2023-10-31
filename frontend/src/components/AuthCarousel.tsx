@@ -1,12 +1,12 @@
 'use client';
+import useAuthCarousel from '@/src/hooks/useAuthCarousel';
+import AuthCarouselButton from './AuthCarouselButton';
 
-import useCarousel from '@/features/auth/hooks/useCarousel';
-
-const Carousel = () => {
-    const { active, setActive, data } = useCarousel();
+const AuthCarousel = () => {
+    const { active, setActive, data } = useAuthCarousel();
 
     return (
-        <div className='bg-primary flex flex-col items-center px-8 py-12 gap-y-10 justify-center w-full'>
+        <div className='bg-primary flex flex-col items-center px-8 py-12 gap-y-10 justify-center'>
             <img
                 className='h-[200px]  rounded-lg shadow-lg lg:h-[350px]'
                 src={data[active].image}
@@ -18,10 +18,10 @@ const Carousel = () => {
             </div>
             <div className='flex gap-x-3'>
                 {data.map((carouselItem, index) => (
-                    <button
-                        className={` rounded-full w-3 aspect-square ${active === index ? 'bg-white' : 'bg-white/50'}`}
+                    <AuthCarouselButton
+                        isActive={active === index}
+                        onClickHandler={() => setActive(index)}
                         key={index}
-                        onClick={() => setActive(index)}
                     />
                 ))}
             </div>
@@ -29,4 +29,4 @@ const Carousel = () => {
     );
 };
 
-export default Carousel;
+export default AuthCarousel;

@@ -1,7 +1,6 @@
 import groupType from '@/type/groupType';
 import userType from '@/type/userType';
 import axios from 'axios';
-import useSWR from 'swr';
 
 const Axios = axios.create({
     withCredentials: true,
@@ -14,7 +13,7 @@ export const getCsrfCookie = async () => {
 };
 
 export const userRegister = async ({ name, email, password }: { name: string; email: string; password: string }) => {
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, { name, email, password });
+    const response = await Axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, { name, email, password });
     return response;
 };
 
@@ -140,33 +139,9 @@ export const postGroupInvitation = async (groupId: string, users_id: string[]) =
     return response;
 };
 
-export const useUser = (userId: string) => {
-    const fetcher = (userId: string): Promise<{ data: userType }> =>
-        Axios.get(`${Axios.defaults.baseURL}/api/users/${userId}`).then((result) => result.data);
-    const { data, isLoading, error } = useSWR(userId, fetcher, { revalidateIfStale: false });
-
-    return {
-        data,
-        isLoading,
-        error,
-    };
-};
-
 export const getGroupDetails = async (groupId: string) => {
     const response = await Axios.get(`${Axios.defaults.baseURL}/api/groups/${groupId}`);
     return response;
-};
-export const useGroup = (groupId: string) => {
-    const fetcher = (groupId: string): Promise<groupType> =>
-        Axios.get(`${Axios.defaults.baseURL}/api/groups/${groupId}`).then((result) => result.data.data);
-    const { data, isLoading, error, mutate } = useSWR(groupId, fetcher, { revalidateIfStale: false });
-
-    return {
-        data,
-        isLoading,
-        error,
-        mutate,
-    };
 };
 
 export const updateGroupDetails = async (

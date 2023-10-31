@@ -1,7 +1,7 @@
 'use client';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-import { getCsrfCookie, userLogin } from '../data/api';
+import { getCsrfCookie, userLogin } from '@/src/data/fetcher';
 import tLoginCredentials from '@/src/types/tLoginCredentials';
 
 const useLoginForm = () => {
@@ -21,7 +21,7 @@ const useLoginForm = () => {
         try {
             await getCsrfCookie();
             await userLogin(values);
-            window.location.replace(window.location.href);
+            window.location.replace(`http://${window.location.host}`);
         } catch (error: any) {
             switch (error.response?.status) {
                 case 401:
