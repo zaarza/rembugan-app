@@ -1,0 +1,910 @@
+openapi: "3.0.3"
+info:
+  title: Restful API Documentation for Rembugan App
+  version: "1"
+  contact:
+    name: Arzaqul Mughny Al Fawwaz
+    email: zaarza@gmail.com
+    url: zaarza.github.io
+servers:
+  - url: https://localhost:8000/api
+    description: Development
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: X-XSRF-TOKEN
+paths:
+  /users/login:
+    post:
+      tags:
+        - Authorization
+      summary: Login user
+      responses:
+        200:
+          description: Login user success
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: X-XSRF-TOKEN=example123;
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: object
+                    properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        status:
+                          type: string
+                        avatar:
+                          type: string
+                        email:
+                          type: string
+                        is_online:
+                          type: boolean
+                        last_seen:
+                          type: number
+                        joined_at:
+                          type: number
+                  message:
+                    type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      security:
+        - cookieAuth: []
+  /users/{userId}:
+    get:
+      tags:
+        - Users
+      summary: Get user information by id
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+            nullable: false
+      responses:
+        200:
+          description: Get detail information user success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      description:
+                        type: string
+                      status:
+                        type: string
+                      avatar:
+                        type: string
+                      email:
+                        type: string
+                      is_online:
+                        type: boolean
+                      last_seen:
+                        type: number
+                      joined_at:
+                        type: number
+                  message:
+                    type: string
+              example:
+                description: Example get user detail information success
+                value:
+                  status: 200
+                  data:
+                    id: user1
+                    name: Robert Alvin
+                    description: Lorem ipsum dolor sit amet
+                    status: Available
+                    avatar: randomstring1231.png
+                    email: robertalvin@email.com
+                    is_online: false
+                    last_seen: 1695883859606
+                    joined_at: 1695883859606
+                  message: Get user detail information success
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: object
+                    nullable: true
+                  message:
+                    type: string
+              example:
+                description: Example unauthorized
+                value:
+                  status: 401
+                  data: null
+                  message: Unathorized user, please login
+        204:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: object
+                    nullable: true
+                  message:
+                    type: string
+              example:
+                description: Example user not found
+                value:
+                  status: 204
+                  data: null
+                  message: User not found
+    put:
+      tags:
+        - Users
+      summary: Update user information
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Update user information success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: object
+                    nullable: true
+                  message:
+                    type: string
+              example:
+                description: Exampe update user information success
+                value:
+                  status: 204
+                  data:
+                    id: user1
+                    name: Robert Alvin
+                    description: Lorem ipsum dolor sit amet
+                    status: Available
+                    avatar: randomstring1231.png
+                    email: robertalvin@email.com
+                    is_online: false
+                    last_seen: 1695883859606
+                    joined_at: 1695883859606
+                  message: Update user information success
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                status:
+                  type: string
+                avatar:
+                  type: string
+                email:
+                  type: string
+                is_online:
+                  type: boolean
+                last_seen:
+                  type: number
+  /users/{userId}/getOnline:
+    put:
+      tags:
+        - Users
+      summary: Update user online status
+      responses:
+        204:
+          description: Update user online status success
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Create a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 4
+                email:
+                  type: string
+                password:
+                  type: string
+                  minLength: 8
+      responses:
+        201:
+          description: Create a new account success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                  message:
+                    type: string
+              examples:
+                201:
+                  description: Example create a new account success
+                  value:
+                    status: 201
+                    data:
+                      id: user1
+                      name: Robert Alvin
+                      email: robertalvin@email.com
+                      joined_at: 1695883859606
+                    message: Create a new account success
+  /contacts:
+    get:
+      summary: Get current user contacts
+      tags:
+        - Contacts
+      responses:
+        200:
+          description: Get current user contacts success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        created_at:
+                          type: number
+                        user_id:
+                          type: string
+                        saved_by:
+                          type: string
+                        details:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            name:
+                              type: string
+                            description:
+                              type: string
+                            status:
+                              type: string
+                            avatar:
+                              type: string
+                            email:
+                              type: string
+                            is_online:
+                              type: boolean
+                            last_seen:
+                              type: number
+                            joined_at:
+                              type: number
+                  message:
+                    type: string
+              example:
+                description: Example get current user contacts success
+                value:
+                  status: 200
+                  data:
+                    - id: user1
+                      name: Robert Alvin
+                      description: Lorem ipsum dolor sit amet
+                      status: Available
+                      avatar: randomstring1231.png
+                      email: robertalvin@email.com
+                      is_online: false
+                      last_seen: 1695883859606
+                      joined_at: 1695883859606
+                  message: Get contacts success
+  /contacts/{userId}:
+    post:
+      tags:
+        - Contacts
+      summary: Add user to contact list
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: Example add user to contact list success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      created_at:
+                        type: number
+                      user_id:
+                        type: string
+                      saved_by:
+                        type: string
+                      details:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+                          description:
+                            type: string
+                          status:
+                            type: string
+                          avatar:
+                            type: string
+                          email:
+                            type: string
+                          is_online:
+                            type: boolean
+                          last_seen:
+                            type: number
+                          joined_at:
+                            type: number
+                  message:
+                    type: string
+    delete:
+      tags:
+        - Contacts
+      summary: Delete user from contact list
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        204:
+          description: Delete user from contact list success
+  /contacts/senderId/accept:
+    post:
+      tags:
+        - Contacts
+      summary: Accept friend request
+      parameters:
+        - name: senderId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Accept friend request success
+  /contacts/senderId/reject:
+    post:
+      tags:
+        - Contacts
+      summary: Reject friend request
+      parameters:
+        - name: senderId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Reject friend request success
+  /messages:
+    get:
+      tags:
+        - Message
+      summary: Get current user initial messages
+      responses:
+        200:
+          description: Get current user messages success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    status:
+                      type: number
+                    data:
+                      type: object
+                      properties:
+                          SOME_SENDER_ID:
+                            type: object
+                            properties:
+                              unreaded:
+                                type: number
+                              pagination:
+                                type: object
+                                properties:
+                                  total:
+                                    type: number
+                                  per_page:
+                                    type: number
+                                  current_page:
+                                    type: number
+                                  last_page:
+                                    type: number
+                                  first_page_url:
+                                    type: string
+                                  last_page_url:
+                                    type: string
+                                  next_page_url:
+                                    type: string
+                                  prev_page_url:
+                                    type: string
+                                  path:
+                                    type: string
+                                  from:
+                                    type: number
+                                  to:
+                                    type: number
+                                  data:
+                                    type: array
+                                    items:
+                                      type: object
+                                      properties:
+                                        id:
+                                          type: string
+                                        content:
+                                          type: string
+                                        is_seen:
+                                          type: boolean
+                                        sent_at:
+                                          type: number
+                                        sender_id:
+                                          type: string
+                                        receiver_id:
+                                          type: string
+                    message:
+                      type: string      
+    post:
+      tags:
+        - Message
+      summary: Post new message
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: Post new message success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      content:
+                        type: string
+                      is_seen:
+                        type: boolean
+                      sent_at:
+                        type: number
+                      sender_id:
+                        type: string
+                      receiver_id:
+                        type: string
+                  message:
+                    type: string
+  /messages/{userId}:
+    get:
+      tags:
+        - Message
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Get messages by id success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: object
+                    properties:
+                      unreaded:
+                        type: number
+                      pagination:
+                        type: object
+                        properties:
+                          total:
+                            type: number
+                          per_page:
+                            type: number
+                          current_page:
+                            type: number
+                          last_page:
+                            type: number
+                          first_page_url:
+                            type: string
+                          last_page_url:
+                            type: string
+                          next_page_url:
+                            type: string
+                          prev_page_url:
+                            type: string
+                          path:
+                            type: string
+                          from:
+                            type: number
+                          to:
+                            type: number
+                          data:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                content:
+                                  type: string
+                                is_seen:
+                                  type: boolean
+                                sent_at:
+                                  type: number
+                                sender_id:
+                                  type: string
+                                receiver_id:
+                                  type: string
+                  message:
+                    type: string
+  /messages/{messageId}/markReaded:
+    put:
+      tags:
+        - Message
+      summary: Mark message as readed
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Mark message as readed success
+  /inbox:
+    get:
+      tags:
+        - Inbox
+      summary: Get current user inbox
+      parameters:
+        - name: show
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - seen
+              - unseen
+      responses:
+        200:
+          description: Get current user inbox success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        type:
+                          type: string
+                        content:
+                          type: string
+                        is_seen:
+                          type: boolean
+                        is_responded:
+                          type: boolean
+                        created_at:
+                          type: number
+                        sender_id:
+                          type: string
+                        received_id:
+                          type: string                
+    post:
+      summary: Post new inbox
+      tags:
+        - Inbox
+      responses:
+        201:
+          description: Post new inbox success
+  /inbox/{inboxId}/markSeen:
+    put:
+      tags:
+        - Inbox
+      summary: Update inbox readed status
+      parameters:
+        - name: inboxId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Update inbox readed status success
+  /groups:
+    get:
+      tags:
+        - Groups
+      summary: Get current user joined groups
+      responses:
+        200:
+          description: Get current user joined groups success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        avatar:
+                          type: string
+                        created_at:
+                          type: number
+                        created_by:
+                          type: string
+    post:
+      tags:
+        - Groups
+      summary: Create a new group
+      responses:
+        201:
+          description: Create a new group success
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+  /groups/{groupId}:
+    get:
+      tags:
+        - Groups
+      summary: Get group detail by group id
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Get group detail success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      description:
+                        type: string
+                      avatar:
+                        type: string
+                      created_at:
+                        type: number
+                      created_by:
+                        type: string
+                  message:
+                    type: string
+    delete:
+      tags:
+        - Groups
+      summary: Leave group
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Leave group success
+    put:
+      tags:
+        - Groups
+      summary: Update group information by group id
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Update group information success
+  /groupMessages/{groupId}:
+    get:
+      tags:
+        - Groups
+      summary: Get group message by group id
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Get group message success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        content:
+                          type: string
+                        sender_id:
+                          type: string
+                        sent_at:
+                          type: number
+  /groups/{groupId}/accept:
+    post:
+      tags:
+        - Groups
+      summary: Accept group join request
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type:
+              string
+      responses:
+        200:
+          description: Accept group join request success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      group_id:
+                        type: string
+                      user_id:
+                        type: string
+                      is_admin:
+                        type: boolean
+                      joined_at:
+                        type: integer
+                  message:
+                    type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                inbox_id:
+                  type: string
+                sender_id:
+                  type: string
+
+        
+    
+
+
+
+
+    
+            
