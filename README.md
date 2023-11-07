@@ -2,7 +2,7 @@
 
 ![1](./images/hero.png)
 
-## About Tokoana
+## About App
 
 This is my first project which using websocket technology, i make many mistakes and learn many new things in this project. This project is not perfect, because you may encounter bugs while using it. Maybe I'll fix it another time
 
