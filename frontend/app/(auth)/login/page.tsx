@@ -1,6 +1,10 @@
-'use client';
-import ConnectedLoginForm from '@/src/components/ConnectedLoginForm';
+import { Metadata } from 'next';
+import Login from './Login';
 
-const Login = () => <ConnectedLoginForm />;
+export const metadata: Metadata = {
+    title: 'Login',
+};
 
-export default Login;
+const Page = () => <Login />;
+
+export default Page;

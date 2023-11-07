@@ -1,6 +1,10 @@
-'use client';
-import ConnectedRegisterForm from '@/src/components/ConnectedRegisterForm';
+import { Metadata } from 'next';
+import Register from './Register';
 
-const Register = () => <ConnectedRegisterForm />;
+export const metadata: Metadata = {
+    title: 'Register',
+};
 
-export default Register;
+const Page = () => <Register />;
+
+export default Page;

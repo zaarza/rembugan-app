@@ -1,6 +1,8 @@
 import groupType from '@/type/groupType';
 import userType from '@/type/userType';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
+import tUserType from '../types/tUserType';
+import tGetUserDataResponse from '../types/tGetUserDataResponse';
 
 const Axios = axios.create({
     withCredentials: true,
@@ -27,7 +29,7 @@ export const validateToken = async () => {
     return response;
 };
 
-export const getCurrentUserDetails = async () => {
+export const getCurrentUserDetails = async (): Promise<tGetUserDataResponse> => {
     const response = await Axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/users/`);
     return response;
 };

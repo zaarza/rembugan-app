@@ -5,24 +5,26 @@ import Modal from '@/features/main/ui/reusable/Modals';
 import Button from '@/features/main/ui/reusable/Button';
 import InputGroup from '@/features/main/ui/reusable/InputGroup';
 import useUpdateProfileForm from '@/features/main/hooks/useUpdateProfileForm';
-import useUserStore from '@/store/user.store';
 import getAvatar from '@/features/main/utils/getAvatar';
 import useCurrentUser from '@/src/hooks/useCurrentUser';
+import useModalCurrentUserProfile from '../hooks/useModalCurrentUserProfile';
 
-type tModalMyProfile = {
+type tModalCurrentUserProfile = {
     show: boolean;
     toggleShow: () => void;
 };
 
-const ModalMyProfile = (props: tModalMyProfile) => {
+const ModalCurrentUserProfile = (props: tModalCurrentUserProfile) => {
     const { show, toggleShow } = props;
     const [showProfilePictureMenu, setShowProfilePictureMenu] = useState<boolean>(false);
     const avatarRef = useRef(null);
     const avatarInputRef: any = useRef(null);
     const avatarMenuRef: any = useOnClickOutside(() => setShowProfilePictureMenu(false));
-    const { form, onChangeProfilePictureInput, deleteAvatarHandler } = useUpdateProfileForm([toggleShow]);
-    const { user } = useUserStore((state) => ({ user: state.user }));
-    const { data } = useCurrentUser();
+    const { data, mutate } = useCurrentUser();
+    const { form, onChangeProfilePictureInput, deleteAvatarHandler } = useModalCurrentUserProfile({
+        data,
+        mutator: mutate,
+    });
 
     if (data) {
         return (
@@ -139,4 +141,4 @@ const ModalMyProfile = (props: tModalMyProfile) => {
     }
 };
 
-export default ModalMyProfile;
+export default ModalCurrentUserProfile;

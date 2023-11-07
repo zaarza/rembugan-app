@@ -53,7 +53,7 @@ class UserController extends Controller
 
         // TODO: Send current user details if id not given
         if (!$id) {
-            $user = new UserResource($request->user());
+            $user = $request->user();
         } else {
             // TODO: Send related user
             $user = User::where('id', $id)->first();

@@ -26,9 +26,9 @@ Route::middleware('auth:sanctum')->get('/validate', function () {
 Route::post('/users', [\App\Http\Controllers\UserController::class, 'register']);
 Route::delete('/users/deleteAvatar', [\App\Http\Controllers\UserController::class, 'deleteAvatar']);
 Route::post('/users/login', [\App\Http\Controllers\UserController::class, 'login']);
-Route::get('/users', [\App\Http\Controllers\UserController::class, 'details']);
-Route::get('/users/{id}', [\App\Http\Controllers\UserController::class, 'details']);
-Route::post('/users/{id}', [\App\Http\Controllers\UserController::class, 'update']);
+Route::get('/users', [\App\Http\Controllers\UserController::class, 'details'])->middleware('auth:sanctum');;
+Route::get('/users/{id}', [\App\Http\Controllers\UserController::class, 'details'])->middleware('auth:sanctum');
+Route::post('/users/{id}', [\App\Http\Controllers\UserController::class, 'update'])->middleware('auth:sanctum');
 
 Route::get('/contacts', [App\Http\Controllers\ContactController::class, 'list'])->middleware('auth:sanctum');
 Route::post('/contacts/{id}', [App\Http\Controllers\ContactController::class, 'add'])->middleware('auth:sanctum');
@@ -63,5 +63,5 @@ Route::delete('/groupMembers/{groupId}/{userId}/kick', [\App\Http\Controllers\Gr
 Route::post('/groupMembers/{groupId}/{userId}/setAdmin', [\App\Http\Controllers\GroupMemberController::class, 'setAdmin'])->middleware('auth:sanctum');
 
 Route::get('/test', function () {
-    return response()->json(["message" => "Hello world"]);
+    return response()->json(["message" => "From Api2"], 200);
 });
