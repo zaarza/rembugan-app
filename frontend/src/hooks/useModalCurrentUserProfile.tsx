@@ -104,7 +104,7 @@ const useModalCurrentUserProfile = (props: tUseModalCurrentUserProfile) => {
             await deleteCurrentUserAvatar();
             mutator({ ...data });
         } catch (error: any) {
-            useUserStore.setState((store) => ({ user: { ...store.user, avatar: oldAvatar } }));
+            useUserStore.setState((store) => ({ user: { ...store.user, avatar: oldAvatar || null } }));
         }
     };
 

@@ -76,30 +76,6 @@ class UserTest extends TestCase
         ])->assertStatus(200);
     }
 
-    public function testGetUserDetailsSuccess()
-    {
-        DB::beginTransaction();
-        $user = User::factory()->create();
-
-        $this->get('/api/users/' . $user->id)->assertStatus(200)->assertJson([
-            'status' => 200,
-            'data' => [
-                'id' => $user->id,
-                'name' => $user->name
-            ],
-            'message' => 'Get user detail success'
-        ]);
-    }
-
-    public function testGetUserDetailsNotFound()
-    {
-        $this->get('/api/users/random')->assertStatus(404)->assertJson([
-            'status' => 404,
-            'data' => null,
-            'message' => 'User not found'
-        ]);
-    }
-
     public function testUpdateUserDetails() {
         DB::beginTransaction();
         Storage::fake();

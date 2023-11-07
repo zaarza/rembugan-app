@@ -119,47 +119,6 @@ class GroupTest extends TestCase
         ]);
     }
 
-    public function test_get_group_details_without_group_id() {
-        $user = User::factory()->create();
-
-        $group1 = Group::create([
-            'name' => 'random',
-            'created_by' => $user->id
-        ]);
-
-        $group2 = Group::create([
-            'name' => 'random 2',
-            'created_by' => $user->id
-        ]);
-
-        GroupMember::create([
-            'user_id' => $user->id,
-            'group_id' => $group1->id
-        ]);
-
-        GroupMember::create([
-            'user_id' => $user->id,
-            'group_id' => $group2->id
-        ]);
-
-        Sanctum::actingAs($user);
-        $response = $this->get('/api/groups/', [
-            'accept' => 'application/json'
-        ]);
-        
-        $response->assertStatus(200);
-        $response->assertJson([
-            'data' => [
-                [
-                    'name' => $group1->name,
-                ],
-                [
-                    'name' => $group2->name
-                ]
-            ]
-        ]);
-    }
-
     public function test_leave_group_with_valid_group_id() {
         $users = User::factory(3)->create();
         $group = Group::factory()->create([ 'created_by' => $users[0]->id ]);

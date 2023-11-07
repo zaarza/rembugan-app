@@ -29,10 +29,10 @@ const NavbarProfileButton = () => {
                         <img
                             className='w-full h-full rounded-full'
                             src={
-                                data.avatar
-                                    ? typeof data.avatar === 'object'
-                                        ? URL.createObjectURL(data.avatar)
-                                        : data.avatar
+                                data.data.data.avatar
+                                    ? typeof data.data.data.avatar === 'object'
+                                        ? URL.createObjectURL(data.data.data.avatar)
+                                        : data.data.data.avatar
                                     : '/assets/illustrations/avatar-empty.svg'
                             }
                             alt='User profile picture'
