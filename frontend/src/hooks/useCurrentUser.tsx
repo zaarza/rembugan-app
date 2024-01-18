@@ -10,7 +10,7 @@ const useCurrentUser = () => {
         errorRetryCount: 3,
     });
 
-    if (error) {
+    if (error && error.response?.status !== undefined) {
         switch (error.response.status) {
             case 401:
                 logOut();
